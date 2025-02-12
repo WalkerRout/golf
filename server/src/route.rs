@@ -3,7 +3,7 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
 
-use tower_http::services::{ServeDir, ServeFile};
+use tower_http::services::ServeDir;
 
 use tracing::info;
 
@@ -19,7 +19,7 @@ pub fn router() -> Router {
 
 async fn home() -> impl IntoResponse {
   HtmlTemplate::from(Home {
-    name: "Walker".into(),
+    name: "Walker Rout".into(),
   })
 }
 

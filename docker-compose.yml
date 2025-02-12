@@ -1,8 +1,8 @@
 services:
   server:
     build:
-      context: .
-      dockerfile: server.Dockerfile
+      context: server
+      dockerfile: Dockerfile
     healthcheck:
       test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/3000' || exit 1
       interval: 3s

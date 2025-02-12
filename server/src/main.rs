@@ -1,3 +1,5 @@
+use tokio::fs;
+
 use tracing::info;
 
 mod route;
@@ -5,6 +7,15 @@ mod server;
 mod template;
 
 use crate::server::Server;
+
+async fn show_visible_files() {
+  if let Ok(mut files) = fs::read_dir("./").await {
+    info!("visible files:");
+    while let Ok(Some(file)) = files.next_entry().await {
+      info!("- {}", file.path().display());
+    }
+  }
+}
 
 #[tokio::main(flavor = "current_thread")]
 async fn main() {
@@ -17,15 +28,9 @@ async fn main() {
 
   log_panics::init();
 
-  info!("initializing golf_server...");
+  show_visible_files().await;
 
-  info!(
-    "visible files for binary: {:?}",
-    std::fs::read_dir("./")
-      .unwrap()
-      .into_iter()
-      .collect::<Vec<_>>()
-  );
+  info!("initializing golf_server...");
 
   let server = Server::new().await;
   let _ = server.run().await;
