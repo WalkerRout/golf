@@ -1,0 +1,3 @@
+.information p {
+  font-size: clamp(16px, 4vw, 24px);
+}

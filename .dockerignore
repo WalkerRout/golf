@@ -1,0 +1,36 @@
+# rust
+rustfmt.toml
+
+# artifacts
+target/
+
+# editor and os-specifics
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+
+# git
+.git
+.gitignore
+.gitmodules
+.gitattributes
+
+# env and secrets
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.example
+*.pem
+*.key
+*.crt
+*.conf
+
+# docker
+.dockerignore
+*.Dockerfile
+docker-compose.yml

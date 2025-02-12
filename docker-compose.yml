@@ -1,0 +1,32 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    healthcheck:
+      test: timeout 5s bash -c ':> /dev/tcp/127.0.0.1/3000' || exit 1
+      interval: 3s
+      timeout: 5s
+      retries: 3
+    networks:
+      - internal
+
+  reverse-proxy:
+    image: nginx:alpine
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro # readonly mount our proxy
+    ports:
+      - "80:80"
+      #- "443:443" # uncomment if we want to handle ssl/tls, for now we delegate
+    networks:
+      - internal
+      - external
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
