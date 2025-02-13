@@ -18,6 +18,4 @@ RUN strip /app/target/x86_64-unknown-linux-musl/release/golf_server
 FROM scratch AS runtime
 WORKDIR /app
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/golf_server ./golf_server
-COPY --from=builder /app/templates/ ./templates/
-COPY --from=builder /app/static/ ./static/
 ENTRYPOINT ["./golf_server"]

@@ -1,9 +1,7 @@
 use askama::Template;
 
-use axum::{
-  http::StatusCode,
-  response::{Html, IntoResponse, Response},
-};
+use axum::http::StatusCode;
+use axum::response::{Html, IntoResponse, Response};
 
 /// Wrapper for us to return our templates in
 pub struct HtmlTemplate<T>(T);
