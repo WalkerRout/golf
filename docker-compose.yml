@@ -5,8 +5,6 @@ services:
       dockerfile: Dockerfile
     networks:
       - internal
-    ports:
-      - "3000:3000"
 
   reverse-proxy:
     image: nginx:alpine
