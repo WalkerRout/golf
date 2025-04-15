@@ -3,11 +3,249 @@
 {% block title %}Curriculum vitae{% endblock title %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="/static/cv.css">
+  <link rel="stylesheet" href="/static/css/cv.css">
 {% endblock extra_css %}
+
+{% block extra_js %}
+  <script src="/static/js/cv.js"></script>
+{% endblock extra_js %}
 
 {% block content %}
   <div class="cv">
+    <div class="cv-menu">
+      <button class="cv-tab active" data-tab="summary">Summary</button>
+      <button class="cv-tab" data-tab="skills">Skills</button>
+      <button class="cv-tab" data-tab="experience">Experience</button>
+      <button class="cv-tab" data-tab="education">Education</button>
+      <button class="cv-tab" data-tab="projects">Projects</button>
+      <!-- <button class="cv-tab" data-tab="awards">Awards</button> -->
+    </div>
     
+    <div class="cv-content">
+      <div class="cv-section active" id="summary-tab">
+        <div class="cv-header">
+          <h1>Walker Rout</h1>
+          <p class="contact-info">
+            <a href="tel:+16046528042">+1.604.652.8042</a> | 
+            <a href="mailto:walkerrout04@gmail.com">walkerrout04@gmail.com</a> | 
+            <a href="https://walker.rout.ca">Website</a> | 
+            <a href="https://github.com/walkerrout">GitHub</a> | 
+            <a href="https://linkedin.com/in/walkerrout">LinkedIn</a>
+          </p>
+        </div>
+        <h2>Professional Summary</h2>
+        <p>Innovative software developer with extensive expertise in systems programming, web technologies, and backend development. Experienced in multiple programming languages and technologies, including Rust, C, C++20, Python, Bash Script, C#, Java, Haskell, JavaScript, HTML, CSS, PHP, and SQL databases. Passionate about creating efficient solutions across multiple programming languages and domains, with a strong interest in GPU acceleration, mathematical correctness, compiler development, AR/VR/XR/MR technologies, high-performance microservices, and machine learning.</p>
+      </div>
+
+      <div class="cv-section" id="skills-tab">
+        <h2>Technical Skills</h2>
+        <div class="skills-grid">
+          <div class="skill-category">
+            <h3>Programming Languages</h3>
+            <ul>
+              <li>C</li>
+              <li>C++20</li>
+              <li>Rust</li>
+              <li>Haskell</li>
+              <li>Python</li>
+              <li>JavaScript</li>
+              <li>HTML/CSS</li>
+              <li>SQL</li>
+              <li>PHP</li>
+              <li>C#</li>
+              <li>Java</li>
+              <li>Nim</li>
+              <li>Racket</li>
+              <li>R</li>
+              <li>Swift</li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <h3>Technologies & Frameworks</h3>
+            <ul>
+              <li>Linux APIs</li>
+              <li>Tokio</li>
+              <li>Flask</li>
+              <li>FastAPI</li>
+              <li>Jupyter</li>
+              <li>LangChain</li>
+              <li>Unity</li>
+              <li>UnrealEngine</li>
+              <li>Apple Vision Pro</li>
+              <li>JQuery</li>
+              <li>HTMX</li>
+              <li>Tailwind CSS</li>
+              <li>Plotly.js</li>
+              <li>Azure</li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <h3>Databases & Tools</h3>
+            <ul>
+              <li>Postgres</li>
+              <li>MySQL</li>
+              <li>SQLite</li>
+              <li>Redis</li>
+              <li>Elasticsearch</li>
+              <li>Qdrant</li>
+              <li>Neo4j</li>
+              <li>Docker</li>
+              <li>GitHub Actions</li>
+              <li>Git</li>
+              <li>Nginx</li>
+            </ul>
+          </div>
+          <div class="skill-category">
+            <h3>Specialized Skills</h3>
+            <ul>
+              <li>Systems Programming</li>
+              <li>Socket/Network Programming</li>
+              <li>Graphics Programming</li>
+              <li>Web Assembly</li>
+              <li>Machine Learning</li>
+              <li>Embedded Systems (AVR)</li>
+              <li>Linux Kernel Module Development</li>
+              <li>Compiler Development</li>
+              <li>2D/3D Game Development</li>
+              <li>Software Development</li>
+              <li>API Design</li>
+              <li>DevOps</li>
+              <li>Teaching</li>
+              <li>Problem Solving</li>
+              <li>Communication</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="cv-section" id="experience-tab">
+        <h2>Professional Experience</h2>
+        <div class="job">
+          <h3>Student Software Developer</h3>
+          <p class="job-details">UBC Emerging Media Lab, Vancouver, BC | January 2024 – Present</p>
+          <ul>
+            <li>Developed interactive applications leveraging emerging technologies to enhance user engagement.</li>
+            <li>Collaborated with interdisciplinary teams to design and implement innovative software solutions.</li>
+            <li>Contributed to projects that integrate virtual and augmented reality for educational purposes.</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>Software Developer / Consultant</h3>
+          <p class="job-details">Planetworks Consulting, North Vancouver, BC | April 2018 - May 2019, July 2022 - September 2023</p>
+          <ul>
+            <li>Designed and built front-end graphs for a UNICEF bandwidth monitor using Plotly.js, JQuery, Flask, and Jupyter</li>
+            <li>Constructed a phone line monitoring system for School District 36, implementing auto-responding school phone outage detection</li>
+            <li>Utilized tools including StarTrinity, SIPp, PostgreSQL, Python, and bash scripts for system development</li>
+            <li>Developed a bandwidth monitoring tool using Docker, Python/Flask, and JavaScript</li>
+            <li>Utilized technologies including JQuery and Plotly for data visualization</li>
+          </ul>
+        </div>
+        <div class="job">
+          <h3>Instructor</h3>
+          <p class="job-details">UTG Academy, Vancouver, BC | September 2021 – July 2022</p>
+          <ul>
+            <li>Instructed Unity game development and computer science concepts for students aged 8-13</li>
+            <li>Taught 2D and 3D game development using Unity for older students (10-13)</li>
+            <li>Guided younger students (8-11) in 2D game development using PixelPAD and Python</li>
+          </ul>
+        </div>
+        <div class="job">
+        <h3>Service Clerk</h3>
+        <p class="job-details">Sobeys, North Vancouver, BC | October 2019 – April 2020</p>
+        <ul>
+          <li>Coordinated incoming deliveries and performed quality checks</li>
+          <li>Managed inventory by stocking shelves, checking expiry dates, and maintaining display standards</li>
+          <li>Provided customer support and ensured cleanliness across store aisles</li>
+        </ul>
+      </div>
+      </div>
+
+      <div class="cv-section" id="education-tab">
+        <h2>Education</h2>
+        <div class="education">
+          <h3>BSc in Cognitive Systems</h3>
+          <p class="education-details">University of British Columbia, BC | 3rd Year in Progress</p>
+        </div>
+        <div class="education">
+          <h3>High School Diploma</h3>
+          <p class="education-details">Handsworth Secondary School, North Vancouver, BC | Honours</p>
+        </div>
+        <div class="education">
+          <h3>Professional Development</h3>
+          <ul>
+            <li>Multiple Unity 2D and 3D C# Courses (Parts 1-4)</li>
+            <li>AP Computer Science (OOP and Java) Courses</li>
+            <li>Advanced/Competitive Computer Science Courses in Java, Python, and C++</li>
+          </ul>
+        </div>
+        <div class="education">
+          <h3>Autodidacticism</h3>
+          <p class="education-details">Self-Directed Technical Learning</p>
+          <ul>
+            <li>Dedicated to lifelong, curiosity-driven learning across computer science, mathematics, and electrical engineering</li>
+            <li>Maintain a curated index of 150+ technical blogs for continual exploration and motivation</li>
+            <li>Passionate about correctness by construction, leveraging algebraic methods and type theory to eliminate entire classes of bugs</li>
+            <li>Engaged in ongoing study of category theory, with recent focus on comonads and their role in compositional design (e.g., builders, zippers)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cv-section" id="projects-tab">
+        <h2>Notable Projects</h2>
+        <div class="project">
+          <h3>AR-A-SOP</h3>
+          <p>Augmented-reality assisted standard operating procedures for the Martin T75 Sliding Table Saw</p>
+          <p class="project-tech">Technologies: RealityKit, ARKit, Xcode, SwiftUI</p>
+        </div>
+        <div class="project">
+          <h3>KG-RAG</h3>
+          <p>Fullstack RAG tool utilizing knowledge graphs and vector stores to index UBC policies, enabling accurate and efficient policy compliance checks for new faculty project ideas</p>
+          <p class="project-tech">Technologies: Knowledge Graphs, Vector Stores, Neo4j</p>
+        </div>
+        <div class="project">
+          <h3>OCELIA</h3>
+          <p>Fullstack ASP.NET Core Blazor RAG (Retrieval-Augmented Generation) application with an internal EML server using WebSockets</p>
+          <p class="project-tech">Technologies: ASP.NET Core, Blazor, WebSockets</p>
+        </div>
+        <div class="project">
+          <h3>Procedural Poetry Funhouse</h3>
+          <p>Virtual Reality experience that aims to use the philosophy of play-based learning to change the way students perceive and experience poetry.</p>
+          <p class="project-tech">Technologies: UnrealEngine, WebSockets, Vector Stores</p>
+        </div>
+        <div class="project">
+          <h3>Local LLM RAG Application</h3>
+          <p>Backend development for a RAG application using local models and vector stores</p>
+          <p class="project-tech">Technologies: Local AI Models (Ollama), Vector Stores, Qdrant, Flask</p>
+        </div>
+        <div class="project">
+          <h3>VR Makerspace</h3>
+          <p>Offers activities for students in the Online Master of Education, Literacy Education program and students in the Master of Educational Technology (MET) program to engage in multiplayer and distributed collaboration time.</p>
+          <p class="project-tech">Technologies: UnrealEngine, Epic Online Services</p>
+        </div>
+        <div class="project">
+          <h3>School District Phone Line Monitoring System</h3>
+          <p>Created a comprehensive phone line monitoring system for School District 36</p>
+          <p class="project-tech">Technologies: StarTrinity, SIPp, Twilio, Bash Scripts</p>
+        </div>
+        <div class="project">
+          <h3>UNICEF Bandwidth Monitor</h3>
+          <p>Developed front-end graphs and monitoring system for UNICEF's worldwide sites</p>
+          <p class="project-tech">Technologies: Plotly.js, JQuery, Flask, Jupyter</p>
+        </div>
+      </div>
+
+    <!--
+      <div class="cv-section" id="awards-tab">
+        <h2>Awards and Honours</h2>
+        <ul>
+          <li>District of North Vancouver Scholarship, 2022</li>
+          <li>BC Achievement Scholarship, 2022</li>
+          <li>Celebrating Student Excellence, 2022</li>
+          <li>5/5 Advanced Placement Computer Science A Exam</li>
+          <li>5/5 Advanced Placement Computer Science Principles Exam</li>
+        </ul>
+      </div>
+    -->
+    </div>
   </div>
 {% endblock content %}
