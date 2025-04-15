@@ -3,8 +3,17 @@ services:
     build:
       context: server
       dockerfile: Dockerfile
+      target: develop # either develop or runtime
+    # disable these volumes when using runtime
+    # - could use an environment variable that we only set for develop builds
+    volumes:
+      - ./server/src:/app/src
+      - ./server/static:/app/static
+      - ./server/templates:/app/templates
     networks:
       - internal
+    environment:
+      - RUST_LOG=cargo_watch=debug
 
   reverse-proxy:
     image: nginx:alpine

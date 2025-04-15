@@ -38,5 +38,9 @@ pub struct Home {
 }
 
 #[derive(Template)]
+#[template(path = "cv.html")]
+pub struct Cv;
+
+#[derive(Template)]
 #[template(path = "404.html")]
 pub struct Error404;

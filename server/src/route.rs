@@ -9,13 +9,14 @@ use include_dir::{include_dir, Dir};
 
 use mime_guess::from_path;
 
-use tracing::info;
+use tracing::{info, warn};
 
-use crate::template::{Error404, Home, HtmlTemplate};
+use crate::template::{Cv, Error404, Home, HtmlTemplate};
 
-pub fn router() -> Router {
+pub fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
+    .route("/cv", get(cv))
     .route("/static/{*path}", get(serve_static))
     .fallback(error_404)
 }
@@ -26,8 +27,12 @@ async fn home() -> impl IntoResponse {
   })
 }
 
+async fn cv() -> impl IntoResponse {
+  HtmlTemplate::from(Cv)
+}
+
 async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {
-  info!("unable to find resource: {}", uri);
+  warn!("unable to find resource: {}", uri);
   HtmlTemplate::from(Error404)
 }
 
@@ -45,6 +50,7 @@ async fn serve_static(Path(path): Path<String>) -> impl IntoResponse {
       .body(body)
       .unwrap()
   } else {
+    warn!("static dir does not contain file: {}", path);
     Response::builder()
       .status(StatusCode::NOT_FOUND)
       .body(Body::empty())
