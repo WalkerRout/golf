@@ -7,7 +7,7 @@ edition = "2021"
 # networking
 axum = "0.8.1"
 tokio = { version = "1.43.0", features = ["rt", "macros"] }
-tower-http = { version = "0.6.2", features = ["fs"] }
+tower-http = { version = "0.6.2", features = ["fs", "compression-br", "compression-gzip"] }
 # templates
 askama = "0.12.1"
 # logging
@@ -15,9 +15,7 @@ tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
 log-panics = "2.1.0"
 # util
+bytes = "1.10.1"
 anyhow = "1.0.95"
 mime_guess = "2.0.5"
-
-[build-dependencies]
-sha2 = "0.10.8"
 include_dir = "0.7.4"

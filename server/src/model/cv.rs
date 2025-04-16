@@ -50,7 +50,7 @@ impl Builder {
 // give ourselves the `build` function
 impl Build for Builder {}
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct TechnicalSkills {
   pub programming_languages: Vec<String>,
   pub technologies_frameworks: Vec<String>,
@@ -58,12 +58,12 @@ pub struct TechnicalSkills {
   pub specialised_skills: Vec<String>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct ProfessionalExperience {
   pub entries: Vec<Job>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Job {
   pub title: String,
   pub company: String,
@@ -74,12 +74,12 @@ pub struct Job {
   pub notes: Vec<String>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Education {
   pub entries: Vec<Qualification>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Qualification {
   pub title: String,
   pub provider: String,
@@ -87,12 +87,12 @@ pub struct Qualification {
   pub notes: Vec<String>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct NotableProjects {
   pub entries: Vec<Project>,
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Project {
   pub title: String,
   pub organisation: Option<String>,

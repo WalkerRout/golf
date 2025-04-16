@@ -1,15 +1,13 @@
-use axum::body::Body;
 use axum::extract::{OriginalUri, Path};
-use axum::http::{header, StatusCode};
-use axum::response::{IntoResponse, Response};
+use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
 
-use include_dir::{include_dir, Dir};
+use tokio::sync::OnceCell;
 
-use mime_guess::from_path;
+use tower_http::compression::CompressionLayer;
 
-use tracing::{info, warn};
+use tracing::warn;
 
 use crate::template::cv::Cv;
 use crate::template::error::Error404;
@@ -19,6 +17,9 @@ use crate::template::HtmlTemplate;
 use crate::model::Build;
 
 use crate::data::cv;
+use crate::data::home;
+
+use crate::r#static;
 
 pub fn router() -> Router {
   rest_router()
@@ -28,19 +29,28 @@ fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
     .route("/cv", get(cv))
-    .route("/static/{*path}", get(serve_static))
+    .route("/static/{*path}", get(r#static))
     .fallback(error_404)
+    // gzip strips etag??? https://github.com/rtomayko/rack-cache/issues/111#issuecomment-92614509
+    //.layer(CompressionLayer::new().br(true))
 }
 
 async fn home() -> impl IntoResponse {
-  HtmlTemplate::from(Home {
-    name: "Walker Rout".into(),
-  })
+  static HOME_CELL: OnceCell<Home> = OnceCell::const_new();
+  let home = HOME_CELL
+    .get_or_init(|| async { home::builder().build::<Home>() })
+    .await
+    .clone();
+  HtmlTemplate::from(home)
 }
 
 async fn cv() -> impl IntoResponse {
-  let builder = cv::builder();
-  HtmlTemplate::from(builder.build::<Cv>())
+  static CV_CELL: OnceCell<Cv> = OnceCell::const_new();
+  let cv = CV_CELL
+    .get_or_init(|| async { cv::builder().build::<Cv>() })
+    .await
+    .clone();
+  HtmlTemplate::from(cv)
 }
 
 async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {
@@ -48,25 +58,6 @@ async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {
   HtmlTemplate::from(Error404)
 }
 
-/// Statically embed our static files...
-static STATIC_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static");
-
-async fn serve_static(Path(path): Path<String>) -> impl IntoResponse {
-  let path = path.trim_start_matches('/');
-  if let Some(file) = STATIC_DIR.get_file(path) {
-    let mime = from_path(path).first_or_octet_stream();
-    let body = Body::from(file.contents());
-    Response::builder()
-      .status(StatusCode::OK)
-      .header(header::CONTENT_TYPE, mime.to_string())
-      //.header(header::CACHE_CONTROL, "public, max-age=31536000, immutable")
-      .body(body)
-      .unwrap()
-  } else {
-    warn!("static dir does not contain file: {}", path);
-    Response::builder()
-      .status(StatusCode::NOT_FOUND)
-      .body(Body::empty())
-      .unwrap()
-  }
+async fn r#static(Path(path): Path<String>) -> impl IntoResponse {
+  r#static::serve(&path).await
 }

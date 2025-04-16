@@ -6,6 +6,7 @@ mod data;
 mod model;
 mod route;
 mod server;
+mod r#static;
 mod template;
 
 use crate::server::Server;

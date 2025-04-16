@@ -13,7 +13,8 @@ services:
     networks:
       - internal
     environment:
-      - RUST_LOG=cargo_watch=debug
+      - RUST_LOG=1
+      - RUST_BACKTRACE=1
 
   reverse-proxy:
     image: nginx:alpine

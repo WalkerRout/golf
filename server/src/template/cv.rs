@@ -2,7 +2,7 @@ use askama::Template;
 
 use crate::model::cv::*;
 
-#[derive(Template)]
+#[derive(Template, Clone)]
 #[template(path = "cv.html")]
 pub struct Cv {
   pub phone_number: String,
