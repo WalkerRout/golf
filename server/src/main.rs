@@ -2,6 +2,8 @@ use tokio::fs;
 
 use tracing::info;
 
+mod data;
+mod model;
 mod route;
 mod server;
 mod template;

@@ -11,9 +11,20 @@ use mime_guess::from_path;
 
 use tracing::{info, warn};
 
-use crate::template::{Cv, Error404, Home, HtmlTemplate};
+use crate::template::cv::Cv;
+use crate::template::error::Error404;
+use crate::template::home::Home;
+use crate::template::HtmlTemplate;
 
-pub fn rest_router() -> Router {
+use crate::model::Build;
+
+use crate::data::cv;
+
+pub fn router() -> Router {
+  rest_router()
+}
+
+fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
     .route("/cv", get(cv))
@@ -28,7 +39,8 @@ async fn home() -> impl IntoResponse {
 }
 
 async fn cv() -> impl IntoResponse {
-  HtmlTemplate::from(Cv)
+  let builder = cv::builder();
+  HtmlTemplate::from(builder.build::<Cv>())
 }
 
 async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {
@@ -47,6 +59,7 @@ async fn serve_static(Path(path): Path<String>) -> impl IntoResponse {
     Response::builder()
       .status(StatusCode::OK)
       .header(header::CONTENT_TYPE, mime.to_string())
+      //.header(header::CACHE_CONTROL, "public, max-age=31536000, immutable")
       .body(body)
       .unwrap()
   } else {

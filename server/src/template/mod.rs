@@ -3,6 +3,10 @@ use askama::Template;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
 
+pub mod cv;
+pub mod error;
+pub mod home;
+
 /// Wrapper for us to return our templates in
 pub struct HtmlTemplate<T>(T);
 
@@ -30,17 +34,3 @@ where
     Self(template)
   }
 }
-
-#[derive(Template)]
-#[template(path = "home.html")]
-pub struct Home {
-  pub name: String,
-}
-
-#[derive(Template)]
-#[template(path = "cv.html")]
-pub struct Cv;
-
-#[derive(Template)]
-#[template(path = "404.html")]
-pub struct Error404;

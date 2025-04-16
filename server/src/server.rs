@@ -16,7 +16,7 @@ impl Server {
     let address = "0.0.0.0";
     let port = 3000;
 
-    let app = route::rest_router();
+    let app = route::router();
     let listener = TcpListener::bind((address, port)).await.unwrap();
 
     info!("listening on {}", listener.local_addr().unwrap());
