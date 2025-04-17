@@ -3,11 +3,47 @@
 {% block title %}Curriculum vitae{% endblock title %}
 
 {% block extra_css %}
+  <link rel="preload" href="/static/css/cv.css" as="style">
   <link rel="stylesheet" href="/static/css/cv.css">
 {% endblock extra_css %}
 
 {% block extra_js %}
-  <script src="/static/js/cv.js"></script>
+  <!-- its actually just way faster to directly embded javascript into the template... -->
+  <!--<script src="/static/js/cv.js"></script>-->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabContainer = document.querySelector('.cv-menu');
+      const tabs = Array.from(tabContainer.querySelectorAll('.cv-tab'));
+      const sections = Array.from(document.querySelectorAll('.cv-section'));
+
+      // map tab data attributes to corresponding section elements
+      const sectionMap = new Map(
+        sections.map(section => [section.id.replace('-tab', ''), section])
+      );
+
+      let activeTab = tabContainer.querySelector('.cv-tab.active');
+      let activeSection = document.querySelector('.cv-section.active');
+
+      tabContainer.addEventListener('click', (e) => {
+        const tab = e.target.closest('.cv-tab');
+        if (!tab || tab === activeTab) return;
+
+        const tabKey = tab.dataset.tab;
+        const section = sectionMap.get(tabKey);
+        if (!section) return;
+
+        // Only change classes if different tab clicked
+        activeTab.classList.remove('active');
+        activeSection.classList.remove('active');
+
+        tab.classList.add('active');
+        section.classList.add('active');
+
+        activeTab = tab;
+        activeSection = section;
+      });
+    });
+  </script>
 {% endblock extra_js %}
 
 {% block content %}

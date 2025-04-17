@@ -1,4 +1,4 @@
-use axum::extract::{OriginalUri, Path};
+use axum::extract::OriginalUri;
 use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
@@ -22,17 +22,15 @@ use crate::data::home;
 use crate::r#static;
 
 pub fn router() -> Router {
-  rest_router()
+  rest_router().merge(r#static::asset_router())
 }
 
 fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
     .route("/cv", get(cv))
-    .route("/static/{*path}", get(r#static))
     .fallback(error_404)
-    // gzip strips etag??? https://github.com/rtomayko/rack-cache/issues/111#issuecomment-92614509
-    //.layer(CompressionLayer::new().br(true))
+    .layer(CompressionLayer::new().br(true).gzip(true))
 }
 
 async fn home() -> impl IntoResponse {
@@ -56,8 +54,4 @@ async fn cv() -> impl IntoResponse {
 async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {
   warn!("unable to find resource: {}", uri);
   HtmlTemplate::from(Error404)
-}
-
-async fn r#static(Path(path): Path<String>) -> impl IntoResponse {
-  r#static::serve(&path).await
 }

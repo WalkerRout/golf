@@ -1,34 +1,23 @@
-use axum::body::Body;
-use axum::http::{header, StatusCode};
-use axum::response::{IntoResponse, Response};
+use axum::http::{header, HeaderValue};
+use axum::Router;
 
-use bytes::Bytes;
+use tower_http::services::ServeDir;
+use tower_http::set_header::SetResponseHeaderLayer;
 
-use include_dir::{include_dir, Dir};
+use tower_layer::Layer;
 
-use mime_guess::from_path;
+/// Statically serve everything under `static/` on disk,
+/// with a Cache‑Control: public, max-age=31536000, immutable header.
+pub fn asset_router() -> Router {
+  let svc = ServeDir::new("static")
+    .precompressed_gzip()
+    .precompressed_br();
 
-use tracing::warn;
+  let svc = SetResponseHeaderLayer::if_not_present(
+    header::CACHE_CONTROL,
+    HeaderValue::from_static("public, max-age=31536000, immutable"),
+  )
+  .layer(svc);
 
-/// Statically embed our static files...
-static STATIC_DIR: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/static");
-
-pub async fn serve(path: &str) -> impl IntoResponse {
-  let path = path.trim_start_matches('/');
-  if let Some(file) = STATIC_DIR.get_file(path) {
-    let mime = from_path(path).first_or_octet_stream();
-    let body = Body::from(Bytes::from_static(file.contents()));
-    Response::builder()
-      .status(StatusCode::OK)
-      .header(header::CONTENT_TYPE, mime.to_string())
-      .header(header::CACHE_CONTROL, "public, max-age=31536000, immutable")
-      .body(body)
-      .unwrap()
-  } else {
-    warn!("static dir does not contain file: {}", path);
-    Response::builder()
-      .status(StatusCode::NOT_FOUND)
-      .body(Body::empty())
-      .unwrap()
-  }
+  Router::new().nest_service("/static", svc)
 }

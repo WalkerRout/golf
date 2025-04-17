@@ -3,8 +3,8 @@ services:
     build:
       context: server
       dockerfile: Dockerfile
-      target: develop # either develop or runtime
-    # disable these volumes when using runtime
+      target: development # either development or production
+    # disable these volumes when using production
     # - could use an environment variable that we only set for develop builds
     volumes:
       - ./server/src:/app/src

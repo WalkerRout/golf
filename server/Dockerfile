@@ -19,16 +19,18 @@ RUN cargo check --release --target x86_64-unknown-linux-musl --bin golf_server
 RUN cargo build --release --target x86_64-unknown-linux-musl --bin golf_server
 RUN strip /app/target/x86_64-unknown-linux-musl/release/golf_server
 
-FROM builder AS develop
+FROM builder AS development
 # use --poll to watch for saved changes on host volume end...
 # use check to ensure we SHOULD be running our application, and it isnt just
 # saved in an intermediate state...
-CMD cargo watch -w src -w static -w templates \
+CMD cargo watch -w src -w static -w templates -w build.rs \
+  -i "static/**/*.gz" -i "static/**/*.br" \
   -x "check --release --target x86_64-unknown-linux-musl --bin golf_server" \
   --poll \
   -s "cargo run --release --target x86_64-unknown-linux-musl --bin golf_server"
 
-FROM scratch AS runtime
+FROM scratch AS production
 WORKDIR /app
+COPY --from=builder /app/static/ ./static/
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/golf_server ./golf_server
 ENTRYPOINT ["./golf_server"]
