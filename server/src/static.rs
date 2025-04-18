@@ -1,4 +1,6 @@
 use axum::http::{header, HeaderValue};
+use axum::response::{IntoResponse, Redirect};
+use axum::routing::get;
 use axum::Router;
 
 use tower_http::services::ServeDir;
@@ -19,5 +21,11 @@ pub fn asset_router() -> Router {
   )
   .layer(svc);
 
-  Router::new().nest_service("/static", svc)
+  Router::new()
+    .nest_service("/static", svc)
+    .route("/robots.txt", get(robots))
+}
+
+async fn robots() -> impl IntoResponse {
+  Redirect::permanent("/static/robots.txt")
 }
