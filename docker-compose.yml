@@ -21,10 +21,11 @@ services:
     depends_on:
       - server
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro # readonly mount our proxy
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro # readonly mount our proxy
+      - ./nginx/ssl:/etc/nginx/ssl:ro
     ports:
       - "80:80"
-      #- "443:443" # uncomment if we want to handle ssl/tls, for now we delegate
+      - "443:443"
     networks:
       - internal
       - external
