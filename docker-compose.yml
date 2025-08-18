@@ -6,6 +6,7 @@ services:
       target: production # either development or production
       args:
         RUST_TARGET: ${RUST_TARGET}
+    restart: unless-stopped
     environment:
       - RUST_LOG=1
       - RUST_BACKTRACE=1
@@ -19,6 +20,7 @@ services:
 
   reverse-proxy:
     image: nginx:alpine
+    restart: unless-stopped
     depends_on:
       - server
     volumes:
@@ -29,6 +31,7 @@ services:
 
   cloudflared:
     image: cloudflare/cloudflared:latest
+    restart: unless-stopped
     depends_on:
       - reverse-proxy
     environment:
