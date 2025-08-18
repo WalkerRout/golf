@@ -4,6 +4,8 @@ services:
       context: server
       dockerfile: Dockerfile
       target: production # either development or production
+      args:
+        RUST_TARGET: ${RUST_TARGET}
     environment:
       - RUST_LOG=1
       - RUST_BACKTRACE=1
