@@ -24,6 +24,7 @@
   padding: 0.5rem 1rem;
   border-bottom: 2px solid transparent;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .cv-tab:hover {
@@ -40,6 +41,7 @@
   flex: 1;
   overflow-y: auto;
   padding: 1rem 2rem;
+  position: relative;
 }
 
 .cv-section {
@@ -55,10 +57,7 @@
   opacity: 0;
   transition: opacity 0.2s ease;
   pointer-events: none;
-}
-
-.cv-content {
-  position: relative;
+  padding: 1rem 2rem;
 }
 
 .cv-section.active {
@@ -84,6 +83,7 @@
 .contact-info {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.9rem;
 }
@@ -99,11 +99,13 @@
 .skills-grid {
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .skill-category {
   flex: 1;
-  margin-right: 1rem;
+  min-width: 200px;
 }
 
 .skill-category h3 {
@@ -125,6 +127,7 @@
 .education ul li {
   position: relative;
   padding-left: 1rem;
+  margin-bottom: 0.25rem;
 }
 
 .skill-category ul li::before,
@@ -137,7 +140,7 @@
 }
 
 .job, .education, .project {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .job h3, .education h3, .project h3 {
@@ -145,13 +148,13 @@
   color: #b0375e;
 }
 
-.job-details, .education-details, .project-tech {
+.job-details, .education-details, .project-tech, .project-org {
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 0.5rem;
 }
 
-/* Scrollbar styling */
+/* scrollbar style */
 .cv-content::-webkit-scrollbar {
   width: 8px;
 }
@@ -168,4 +171,104 @@
 
 .cv-content::-webkit-scrollbar-thumb:hover {
   background: #b0375e;
+}
+
+/* mobile styles, side tabs... */
+@media (max-width: 768px) {
+  .cv {
+    flex-direction: row;
+    gap: 0;
+    height: 100%;
+  }
+  
+  .cv-menu {
+    flex-direction: column;
+    width: auto;
+    min-width: 120px;
+    border-bottom: none;
+    border-right: 1px solid #e0e0e0;
+    padding: 0.5rem;
+    gap: 0.5rem;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  
+  .cv-tab {
+    font-size: 0.9rem;
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    border-bottom: none;
+    border-left: 2px solid transparent;
+    width: 100%;
+  }
+  
+  .cv-tab.active {
+    border-left-color: #d14b72;
+    border-bottom-color: transparent;
+  }
+  
+  .cv-content {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    /* prevent item from overflowing */
+    min-width: 0;
+  }
+  
+  .cv-section {
+    padding: 0;
+  }
+  
+  .cv-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .contact-info {
+    font-size: 0.8rem;
+    gap: 0.5rem;
+  }
+  
+  .cv-section h2 {
+    font-size: 1.2rem;
+  }
+  
+  .skills-grid {
+    flex-direction: column;
+  }
+  
+  .skill-category {
+    min-width: 100%;
+  }
+}
+
+/* small mobile */
+@media (max-width: 480px) {
+  .cv-menu {
+    min-width: 80px;
+  }
+  
+  .cv-tab {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .cv-content {
+    padding: 0.75rem;
+  }
+  
+  .cv-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .contact-info {
+    font-size: 0.7rem;
+  }
+  
+  .job h3, .education h3, .project h3 {
+    font-size: 1rem;
+  }
+  
+  .job-details, .education-details, .project-tech, .project-org {
+    font-size: 0.8rem;
+  }
 }

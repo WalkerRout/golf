@@ -21,7 +21,7 @@ impl Default for Cv {
     Self {
       phone_number: "+1.604.652.8042".into(),
       email_address: "walkerrout04@gmail.com".into(),
-      website_link: "https://walker.rout.ca/".into(),
+      website_link: "https://walkerrout.ca/".into(),
       github_link: "https://github.com/WalkerRout/".into(),
       linkedin_link: "https://linkedin.com/in/walkerrout".into(),
       skills: Default::default(),

@@ -3,8 +3,6 @@ use axum::response::IntoResponse;
 use axum::routing::get;
 use axum::Router;
 
-use tokio::sync::OnceCell;
-
 use tower_http::compression::CompressionLayer;
 
 use tracing::warn;
@@ -34,20 +32,12 @@ fn rest_router() -> Router {
 }
 
 async fn home() -> impl IntoResponse {
-  static HOME_CELL: OnceCell<Home> = OnceCell::const_new();
-  let home = HOME_CELL
-    .get_or_init(|| async { home::builder().build::<Home>() })
-    .await
-    .clone();
+  let home = home::builder().build::<Home>();
   HtmlTemplate::from(home)
 }
 
 async fn cv() -> impl IntoResponse {
-  static CV_CELL: OnceCell<Cv> = OnceCell::const_new();
-  let cv = CV_CELL
-    .get_or_init(|| async { cv::builder().build::<Cv>() })
-    .await
-    .clone();
+  let cv = cv::builder().build::<Cv>();
   HtmlTemplate::from(cv)
 }
 

@@ -21,7 +21,7 @@ impl Builder {
     self
   }
 
-  pub fn add_database(mut self, db: impl Into<String>) -> Self {
+  pub fn add_database_or_tool(mut self, db: impl Into<String>) -> Self {
     self.skills.databases_tools.push(db.into());
     self
   }

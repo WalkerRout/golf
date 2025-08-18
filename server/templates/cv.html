@@ -32,12 +32,15 @@
         const section = sectionMap.get(tabKey);
         if (!section) return;
 
-        // Only change classes if different tab clicked
+        // only change classes if different tab clicked
         activeTab.classList.remove('active');
         activeSection.classList.remove('active');
 
         tab.classList.add('active');
         section.classList.add('active');
+
+        // reset scroll position
+        document.querySelector('.cv-content').scrollTop = 0;
 
         activeTab = tab;
         activeSection = section;
@@ -69,7 +72,7 @@
           </p>
         </div>
         <h2>Professional Summary</h2>
-        <p>Innovative software developer with extensive expertise in systems programming, web technologies, and backend development. Experienced in multiple programming languages and technologies, including Rust, C, C++20, Python, Bash Script, C#, Java, Haskell, JavaScript, HTML, CSS, PHP, and SQL databases. Passionate about creating efficient solutions across multiple programming languages and domains, with a strong interest in GPU acceleration, mathematical correctness, compiler development, AR/VR/XR/MR technologies, high-performance microservices, and machine learning.</p>
+        <p>Curious software developer with extensive experience in LLM retrieval systems, web/backend development, and embedded/systems programming. Experienced in multiple programming languages and technologies, including Rust, Haskell, C, C++, Python, Shell Scripting, C#, JavaScript/HTML/CSS, and SQL databases. Passionate about creating efficient solutions across multiple programming languages and domains, with a strong interest in correctness by construction, abstract algebra, formal languages/compilers, AR/VR/XR/MR technologies, high-performance services, and machine learning.</p>
       </div>
 
       <div class="cv-section" id="skills-tab">

@@ -16,53 +16,46 @@ pub fn builder() -> Builder {
 
 fn build_languages(builder: Builder) -> Builder {
   builder
-    .add_language("C")
-    .add_language("C++20")
-    .add_language("Rust")
-    .add_language("Haskell")
     .add_language("Python")
     .add_language("JavaScript")
-    .add_language("HTML/CSS")
-    .add_language("SQL")
-    .add_language("PHP")
+    .add_language("Rust")
+    .add_language("Haskell")
+    .add_language("ANSI C/C99/C11")
+    .add_language("C++20/23")
     .add_language("C#")
-    .add_language("Java")
-    .add_language("Nim")
-    .add_language("R")
     .add_language("Swift")
 }
 
 fn build_technologies(builder: Builder) -> Builder {
   builder
-    .add_technology("Linux APIs")
-    .add_technology("Tokio")
+    .add_technology("CI/CD with GitHub Actions")
+    .add_technology("AWS")
     .add_technology("Flask")
     .add_technology("FastAPI")
     .add_technology("Jupyter")
     .add_technology("LangChain")
     .add_technology("Unity")
     .add_technology("UnrealEngine")
-    .add_technology("Xcode w/ AVP")
+    .add_technology("Xcode")
     .add_technology("JQuery")
     .add_technology("HTMX")
     .add_technology("Tailwind Css")
     .add_technology("Plotly.js")
-    .add_technology("Azure")
+    .add_technology("Linux Kernel APIs")
+    .add_technology("Linker Scripts/FFI")
 }
 
 fn build_databases_tools(builder: Builder) -> Builder {
   builder
-    .add_database("Postgres")
-    .add_database("MySQL")
-    .add_database("SQLite")
-    .add_database("Redis")
-    .add_database("Elasticsearch")
-    .add_database("Qdrant")
-    .add_database("Neo4j")
-    .add_database("Docker")
-    .add_database("GitHub Actions")
-    .add_database("Git")
-    .add_database("Nginx")
+    .add_database_or_tool("Git")
+    .add_database_or_tool("Docker")
+    .add_database_or_tool("Nginx")
+    .add_database_or_tool("Postgres")
+    .add_database_or_tool("SQLite")
+    .add_database_or_tool("Redis")
+    .add_database_or_tool("MySQL")
+    .add_database_or_tool("Qdrant")
+    .add_database_or_tool("Neo4j")
 }
 
 fn build_specialised(builder: Builder) -> Builder {
@@ -76,7 +69,6 @@ fn build_specialised(builder: Builder) -> Builder {
     .add_specialised("Linux Kernel Module Development")
     .add_specialised("Compiler Development")
     .add_specialised("2D/3D Game Development")
-    .add_specialised("Software Development")
     .add_specialised("DevOps")
     .add_specialised("Teaching")
     .add_specialised("Problem Solving")
@@ -86,11 +78,31 @@ fn build_specialised(builder: Builder) -> Builder {
 fn build_experience(builder: Builder) -> Builder {
   builder
     .add_job(Job {
+      title: "Junior Software Developer".into(),
+      company: "yPilot".into(),
+      location: Some("Vancouver, BC".into()),
+      start: Some("July 2025".into()),
+      end: None,
+      notes: vec![
+        "Developing LLM/OCR-based solutions to optimize information extraction for enterprise financial institutions.".into(),
+      ],
+    })
+    .add_job(Job {
+      title: "Student Software Developer".into(),
+      company: "UBC Digital Experience Lab".into(),
+      location: Some("Vancouver, BC".into()),
+      start: Some("June 2025".into()),
+      end: None,
+      notes: vec![
+        "Developing AI tools and solutions in a secure, University environment.".into(),
+      ],
+    })
+    .add_job(Job {
       title: "Student Software Developer".into(),
       company: "UBC Emerging Media Lab".into(),
       location: Some("Vancouver, BC".into()),
       start: Some("January 2024".into()),
-      end: None,
+      end: Some("June 2025".into()),
       notes: vec![
         "Developed interactive applications leveraging emerging technologies to enhance user engagement.".into(),
         "Collaborated with interdisciplinary teams to design and implement innovative software solutions.".into(),
@@ -142,34 +154,27 @@ fn build_education(builder: Builder) -> Builder {
     .add_education(Qualification {
       title: "BSc in Cognitive Systems".into(),
       provider: "University of British Columbia, BC".into(),
-      description: Some("3rd Year in Progress".into()),
-      notes: vec![],
+      description: Some("3rd Year Standing".into()),
+      notes: vec![
+        "Recipient of the Kirk Karasin Memorial Award in Computer Science.".into(),
+      ],
     })
     .add_education(Qualification {
       title: "High School Diploma".into(),
       provider: "Handsworth Secondary School, North Vancouver, BC".into(),
       description: Some("Honours".into()),
-      notes: vec![],
+      notes: vec![
+        "Graduated with a 5/5 on the AP Computer Science Principles and AP Computer Science A exams. We did not have an actual AP Computer Science A course at my school, so I had to self-study.".into(),
+      ],
     })
     .add_education(Qualification {
-      title: "Professional Development".into(),
-      provider: "Various".into(),
+      title: "Game Development/Competitive CS".into(),
+      provider: "Under the GUI".into(),
       description: None,
       notes: vec![
         "Multiple Unity 2D and 3D C# Courses (Parts 1-4)".into(),
         "AP Computer Science (OOP and Java) Courses".into(),
         "Advanced/Competitive Computer Science Courses in Java, Python, and C++".into(),
-      ],
-    })
-    .add_education(Qualification {
-      title: "Autodidacticism".into(),
-      provider: "Self-Directed Technical Learning".into(),
-      description: None,
-      notes: vec![
-        "Dedicated to lifelong, curiosity-driven learning across computer science, mathematics, and electrical engineering".into(),
-        "Maintain a curated index of 150+ technical blogs for continual exploration and motivation".into(),
-        "Passionate about correctness by construction, leveraging algebraic methods and type theory to eliminate entire classes of bugs".into(),
-        "Engaged in ongoing study of category theory, with recent focus on comonads and their role in compositional design (e.g., builders, zippers)".into(),
       ],
     })
 }

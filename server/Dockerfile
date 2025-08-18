@@ -8,6 +8,7 @@ RUN cargo chef prepare --recipe-path recipe.json
 FROM chef AS builder 
 RUN cargo install cargo-watch
 COPY --from=planner /app/recipe.json recipe.json
+# need musl to run with glibc statically linked on scratch image...
 RUN rustup target add x86_64-unknown-linux-musl
 # build dependencies - this is caching layer!!!
 RUN cargo chef cook --release --target x86_64-unknown-linux-musl --recipe-path recipe.json

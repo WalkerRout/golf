@@ -37,6 +37,9 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 1rem;
+  /* for some reason important for mobile flex layouts */
+  min-height: 0;
 }
 
 footer {
@@ -81,17 +84,15 @@ footer {
 a {
   color: #d14b72;
   font-weight: bold;
-  text-decoration: none; /* remove underline */
+  text-decoration: none;
   transition: color 0.3s ease-in-out;
 }
 
-/* dark shade */
 a:hover {
   color: #b0375e;
   text-decoration: underline;
 }
 
-/* slightly darker */
 a:active {
   color: #8a2c4b;
 }
@@ -106,4 +107,39 @@ a:active {
   box-shadow: 4px 4px 10px var(--shadow-color);
   width: 75vw;
   height: 75vh;
+  /* allow scrolling in content area */
+  overflow: auto;
+}
+
+/* mobile styles */
+@media (max-width: 768px) {
+  main {
+    padding: 0.5rem;
+  }
+  
+  .content {
+    width: 95vw;
+    /* adjust for header/footer */
+    height: calc(100vh - 120px);
+    padding: 1rem;
+    border-radius: 4px;
+  }
+  
+  footer {
+    font-size: 0.7rem;
+    padding: 0.75rem;
+  }
+  
+  .back-home {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* small mobile */
+@media (max-width: 480px) {
+  .content {
+    width: 98vw;
+    padding: 0.75rem;
+  }
 }
