@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Congeries{% endblock title %}
+
+{% block extra_css %}
+  <link rel="preload" href="/static/css/congeries.css" as="style">
+  <link rel="stylesheet" href="/static/css/congeries.css">
+{% endblock extra_css %}
+
+{% block content %}
+  <div class="congeries">
+    <div class="intro">
+      <h1>Congeries</h1>
+      <p>Some of my assorted projects/experiments</p>
+    </div>
+    
+    <div class="repositories">
+      {% for repo in repositories %}
+      <a href="{{ repo.url }}" class="repo-card" target="_blank" rel="noopener noreferrer">
+        <div class="repo-header">
+          <span class="repo-name">{{ repo.name }}</span>
+          <svg class="external-link" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </div>
+        <p class="repo-description">{{ repo.description }}</p>
+        <div class="repo-footer">
+          <span class="repo-url">{{ repo.url }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock content %}

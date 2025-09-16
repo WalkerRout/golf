@@ -2,10 +2,11 @@ use tokio::fs;
 
 use tracing::info;
 
-mod data;
+mod build;
 mod model;
 mod route;
 mod server;
+mod service;
 mod r#static;
 mod template;
 

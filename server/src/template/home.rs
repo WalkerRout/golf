@@ -1,6 +1,6 @@
 use askama::Template;
 
-use crate::model::home::*;
+use crate::model::home;
 
 #[derive(Template, Clone)]
 #[template(path = "home.html")]
@@ -9,11 +9,15 @@ pub struct Home {
   pub age: u8,
 }
 
-impl From<Builder> for Home {
-  fn from(builder: Builder) -> Self {
+impl<B> From<B> for Home
+where
+  B: Into<home::Home>,
+{
+  fn from(builder: B) -> Self {
+    let home = builder.into();
     Self {
-      name: builder.name,
-      age: builder.age,
+      name: home.name,
+      age: home.age,
     }
   }
 }

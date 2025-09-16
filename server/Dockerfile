@@ -25,11 +25,11 @@ RUN cargo build --release --target $RUST_TARGET --bin golf_server
 RUN strip /app/target/$RUST_TARGET/release/golf_server
 
 FROM builder AS development
+# install hot reload helper
+RUN cargo install cargo-watch
 # crash if our application has logic errors, also cache 'check's for cargo
 # watch to avoid running the run script on breaking changes
 RUN cargo check --release --target $RUST_TARGET --bin golf_server
-# install hot reload helper
-RUN cargo install cargo-watch
 # use --poll to watch for saved changes on host volume end...
 # use check to ensure we SHOULD be running our application, and it isnt just
 # saved in an intermediate state...

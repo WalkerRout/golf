@@ -1,21 +1,15 @@
-use crate::model::Build;
+use crate::build::home::Builder;
 
-#[derive(Debug, Default)]
-pub struct Builder {
+pub struct Home {
   pub name: String,
   pub age: u8,
 }
 
-impl Builder {
-  pub fn set_name(mut self, name: impl Into<String>) -> Self {
-    self.name = name.into();
-    self
-  }
-
-  pub fn set_age(mut self, age: impl Into<u8>) -> Self {
-    self.age = age.into();
-    self
+impl From<Builder> for Home {
+  fn from(builder: Builder) -> Self {
+    Self {
+      name: builder.name,
+      age: builder.age,
+    }
   }
 }
-
-impl Build for Builder {}

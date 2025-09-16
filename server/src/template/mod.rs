@@ -3,7 +3,7 @@ use askama::Template;
 use axum::http::StatusCode;
 use axum::response::{Html, IntoResponse, Response};
 
-pub mod cv;
+pub mod congeries;
 pub mod error;
 pub mod home;
 

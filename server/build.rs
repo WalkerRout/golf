@@ -42,7 +42,7 @@ fn compress_file(input_path: &Path) -> io::Result<()> {
   // Skip already compressed files
   if input_path
     .extension()
-    .map_or(false, |ext| ext == "gz" || ext == "br")
+    .is_some_and(|ext| ext == "gz" || ext == "br")
   {
     return Ok(());
   }
@@ -51,7 +51,7 @@ fn compress_file(input_path: &Path) -> io::Result<()> {
   let ext = input_path
     .extension()
     .map(|e| e.to_string_lossy().into_owned())
-    .unwrap_or_else(|| "".to_string());
+    .unwrap_or_default();
 
   // gzip compression
   let gzip_path = input_path.with_extension(format!("{}.gz", ext));
