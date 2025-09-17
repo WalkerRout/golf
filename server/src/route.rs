@@ -7,7 +7,7 @@ use tokio::sync::OnceCell;
 
 use tower_http::compression::CompressionLayer;
 
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::build::congeries;
 use crate::build::home;
@@ -46,7 +46,10 @@ async fn congeries() -> impl IntoResponse {
   let congeries = CONGERIES_CELL
     .get_or_init(|| async {
       match github::fetch_repositories().await {
-        Ok(congeries) => congeries.into(),
+        Ok(congeries) => {
+          info!("congeries template cached");
+          congeries.into()
+        },
         Err(e) => {
           warn!("failed to fetch github repos: {e}");
           congeries::builder().build()

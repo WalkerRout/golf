@@ -1,7 +1,7 @@
 [package]
 name = "golf_server"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 # networking
@@ -10,6 +10,7 @@ tokio = { version = "1.43.0", features = ["rt", "macros"] }
 tower-http = { version = "0.6.2", features = ["fs", "set-header", "compression-br", "compression-gzip"] }
 tower-layer = "0.3.3"
 reqwest = { version = "0.12.23", default-features = false, features = ["json", "rustls-tls"] }
+url = "2.5.7"
 # templates
 askama = "0.12.1"
 # logging
