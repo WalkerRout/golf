@@ -3,9 +3,7 @@ x-dev-environment: &dev-env
   RUST_BACKTRACE: "1"
 
 x-dev-volumes: &dev-volumes
-  - ./server/src:/app/src
-  - ./server/static:/app/static
-  - ./server/templates:/app/templates
+  - ./server/backend:/app/backend
 
 services:
   server-development:
@@ -15,7 +13,7 @@ services:
       dockerfile: Dockerfile
       target: development
       args:
-        RUST_TARGET: ${RUST_TARGET:?}
+        RUST_TARGET: ${RUST_TARGET:?need to know cpu architecture for server musl build}
     restart: unless-stopped
     environment:
       <<: *dev-env

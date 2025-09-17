@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
 
-use reqwest::{Url, Client};
+use reqwest::{Client, Url};
 
 use serde::Deserialize;
 
@@ -44,7 +44,8 @@ impl From<GitHubRepo> for Repo {
 pub async fn fetch_repositories() -> Result<Congeries, Error> {
   let url = {
     let mut parsed = Url::parse("https://api.github.com/users/WalkerRout/repos")?;
-    parsed.query_pairs_mut()
+    parsed
+      .query_pairs_mut()
       .append_pair("per_page", "200")
       .append_pair("type", "all")
       .append_pair("sort", "updated");

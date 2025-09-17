@@ -5,8 +5,8 @@ use std::path::Path;
 
 use brotli::CompressorWriter;
 
-use flate2::write::GzEncoder;
 use flate2::Compression as GzipCompression;
+use flate2::write::GzEncoder;
 
 fn main() -> io::Result<()> {
   let out_dir = env::var("CARGO_MANIFEST_DIR").unwrap();

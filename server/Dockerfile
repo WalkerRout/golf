@@ -25,16 +25,16 @@ RUN cargo build --release --target $RUST_TARGET --bin golf_server
 RUN strip /app/target/$RUST_TARGET/release/golf_server
 
 FROM builder AS development
-# install hot reload helper
-RUN cargo install cargo-watch
 # crash if our application has logic errors, also cache 'check's for cargo
 # watch to avoid running the run script on breaking changes
 RUN cargo check --release --target $RUST_TARGET --bin golf_server
+# install hot reload helper
+RUN cargo install cargo-watch
 # use --poll to watch for saved changes on host volume end...
 # use check to ensure we SHOULD be running our application, and it isnt just
 # saved in an intermediate state...
-CMD cargo watch -w src -w static -w templates -w build.rs \
-  -i "static/**/*.gz" -i "static/**/*.br" \
+CMD cargo watch -w backend \
+  -i "backend/static/**/*.gz" -i "backend/static/**/*.br" \
   -x "check --release --target $RUST_TARGET --bin golf_server" \
   --poll \
   -s "cargo run --release --target $RUST_TARGET --bin golf_server"
@@ -44,6 +44,6 @@ FROM scratch AS production
 ARG RUST_TARGET
 ENV RUST_TARGET=$RUST_TARGET
 WORKDIR /app
-COPY --from=builder /app/static/ ./static/
-COPY --from=builder /app/target/$RUST_TARGET/release/golf_server ./golf_server
-ENTRYPOINT ["./golf_server"]
+COPY --from=builder /app/backend/static/ ./backend/static/
+COPY --from=builder /app/target/$RUST_TARGET/release/golf_server ./backend/golf_server
+ENTRYPOINT ["./backend/golf_server"]

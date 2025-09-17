@@ -1,5 +1,5 @@
-use crate::build::repo;
 use crate::build::Build;
+use crate::build::repo;
 
 use crate::model::repo::Repo;
 
@@ -19,11 +19,10 @@ impl Build for Builder {}
 
 // fallback builder with hardcoded repos
 pub fn builder() -> Builder {
-  Builder::default()
-    .add(
-      repo::Builder::default()
-        .set_name("golf")
-        .set_description("A minimal static site generator written in Rust")
-        .set_url("https://github.com/walkerrout/golf"),
-    )
+  Builder::default().add(
+    repo::Builder::default()
+      .set_name("golf")
+      .set_description("A minimal static site generator written in Rust")
+      .set_url("https://github.com/walkerrout/golf"),
+  )
 }

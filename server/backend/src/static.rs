@@ -1,7 +1,10 @@
-use axum::http::{header, HeaderValue};
+use std::env;
+use std::path::Path;
+
+use axum::Router;
+use axum::http::{HeaderValue, header};
 use axum::response::{IntoResponse, Redirect};
 use axum::routing::get;
-use axum::Router;
 
 use tower_http::services::ServeDir;
 use tower_http::set_header::SetResponseHeaderLayer;
@@ -11,7 +14,9 @@ use tower_layer::Layer;
 /// Statically serve everything under `static/` on disk,
 /// with a Cache‑Control: public, max-age=31536000, immutable header.
 pub fn asset_router() -> Router {
-  let svc = ServeDir::new("static")
+  const BACKEND_MANIFEST: &str = env!("CARGO_MANIFEST_DIR");
+  let static_dir = Path::new(BACKEND_MANIFEST).join("static");
+  let svc = ServeDir::new(static_dir)
     .precompressed_gzip()
     .precompressed_br();
 

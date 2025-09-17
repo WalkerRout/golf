@@ -1,7 +1,7 @@
+use axum::Router;
 use axum::extract::OriginalUri;
 use axum::response::IntoResponse;
 use axum::routing::get;
-use axum::Router;
 
 use tokio::sync::OnceCell;
 
@@ -9,16 +9,16 @@ use tower_http::compression::CompressionLayer;
 
 use tracing::{info, warn};
 
+use crate::build::Build;
 use crate::build::congeries;
 use crate::build::home;
-use crate::build::Build;
 
 use crate::service::github;
 
+use crate::template::HtmlTemplate;
 use crate::template::congeries::Congeries;
 use crate::template::error::Error404;
 use crate::template::home::Home;
-use crate::template::HtmlTemplate;
 
 use crate::r#static;
 
@@ -49,7 +49,7 @@ async fn congeries() -> impl IntoResponse {
         Ok(congeries) => {
           info!("congeries template cached");
           congeries.into()
-        },
+        }
         Err(e) => {
           warn!("failed to fetch github repos: {e}");
           congeries::builder().build()
