@@ -6,22 +6,15 @@
     <meta name="description" content="Walker Rout's portfolio">
     <title>{% block title %}Walker's Portfolio{% endblock title %}</title>
     <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
-    <!-- connect to google fonts early -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- fetch and defer apply -->
+    <!-- optimize css loading with swap to render on load -->
     <link
       rel="preload"
       as="style"
-      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap"
-      onload="this.onload=null;this.rel='stylesheet'"
-    >
-    <!-- if js is disabled the above wont load the fonts, so fallback -->
+      href="/static/css/fonts.css"
+      onload="this.onload=null;this.rel='stylesheet'">
+    <!-- fallback -->
     <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;300;400;500;600;700;800;900&display=swap"
-      >
+      <link rel="stylesheet" href="/static/css/fonts.css">
     </noscript>
     <!-- again, swap to render on load -->
     <link
