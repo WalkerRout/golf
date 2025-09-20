@@ -1,11 +1,14 @@
+use std::convert::Infallible;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use crate::build::Build;
 
+use crate::template::home::Home;
+
 #[derive(Debug, Default)]
 pub struct Builder {
-  pub name: String,
-  pub age: u8,
+  name: String,
+  age: u8,
 }
 
 impl Builder {
@@ -20,9 +23,19 @@ impl Builder {
   }
 }
 
-impl Build for Builder {}
+impl Build for Builder {
+  type Target = Home;
+  type Error = Infallible;
 
-pub fn builder() -> Builder {
+  fn build(self) -> Result<Self::Target, Self::Error> {
+    Ok(Home {
+      name: self.name,
+      age: self.age,
+    })
+  }
+}
+
+pub async fn builder() -> Builder {
   Builder::default()
     .set_name("Walker Rout")
     .set_age(get_my_age())

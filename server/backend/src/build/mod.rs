@@ -1,12 +1,9 @@
 pub mod congeries;
 pub mod home;
-pub mod repo;
 
-pub trait Build: Sized {
-  fn build<T>(self) -> T
-  where
-    T: From<Self>,
-  {
-    T::from(self)
-  }
+pub trait Build {
+  type Target;
+  type Error;
+
+  fn build(self) -> Result<Self::Target, Self::Error>;
 }

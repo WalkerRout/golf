@@ -4,7 +4,6 @@ use reqwest::{Client, Url};
 
 use serde::Deserialize;
 
-use crate::model::congeries::Congeries;
 use crate::model::repo::Repo;
 
 #[derive(thiserror::Error, Debug)]
@@ -41,7 +40,7 @@ impl From<GitHubRepo> for Repo {
   }
 }
 
-pub async fn fetch_repositories() -> Result<Congeries, Error> {
+pub async fn fetch_repositories() -> Result<Vec<Repo>, Error> {
   let url = {
     let mut parsed = Url::parse("https://api.github.com/users/WalkerRout/repos")?;
     parsed
@@ -69,7 +68,5 @@ pub async fn fetch_repositories() -> Result<Congeries, Error> {
     .map(Repo::from)
     .collect();
 
-  Ok(Congeries {
-    repositories: repos,
-  })
+  Ok(repos)
 }

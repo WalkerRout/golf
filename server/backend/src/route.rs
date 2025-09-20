@@ -7,13 +7,11 @@ use tokio::sync::OnceCell;
 
 use tower_http::compression::CompressionLayer;
 
-use tracing::{info, warn};
+use tracing::warn;
 
 use crate::build::Build;
 use crate::build::congeries;
 use crate::build::home;
-
-use crate::service::github;
 
 use crate::template::HtmlTemplate;
 use crate::template::congeries::Congeries;
@@ -35,8 +33,16 @@ fn rest_router() -> Router {
 }
 
 async fn home() -> impl IntoResponse {
-  // home model builds into the `Home` template
-  let home = home::builder().build::<Home>();
+  // singleton cache
+  static HOME_CELL: OnceCell<Home> = OnceCell::const_new();
+  let home = HOME_CELL
+    .get_or_init(|| async {
+      // home model builds into the `Home` template
+      // - err variant is `Infallible`, safe to unwrap...
+      home::builder().await.build().unwrap()
+    })
+    .await
+    .clone();
   HtmlTemplate::from(home)
 }
 
@@ -44,18 +50,7 @@ async fn congeries() -> impl IntoResponse {
   // singleton cache
   static CONGERIES_CELL: OnceCell<Congeries> = OnceCell::const_new();
   let congeries = CONGERIES_CELL
-    .get_or_init(|| async {
-      match github::fetch_repositories().await {
-        Ok(congeries) => {
-          info!("congeries template cached");
-          congeries.into()
-        }
-        Err(e) => {
-          warn!("failed to fetch github repos: {e}");
-          congeries::builder().build()
-        }
-      }
-    })
+    .get_or_init(|| async { congeries::builder().await.build().unwrap() })
     .await
     .clone();
   HtmlTemplate::from(congeries)
