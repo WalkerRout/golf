@@ -28,7 +28,12 @@ pub fn asset_router() -> Router {
 
   Router::new()
     .nest_service("/static", svc)
+    .route("/favicon.ico", get(favicon))
     .route("/robots.txt", get(robots))
+}
+
+async fn favicon() -> impl IntoResponse {
+  Redirect::permanent("/static/images/favicon.ico")
 }
 
 async fn robots() -> impl IntoResponse {
