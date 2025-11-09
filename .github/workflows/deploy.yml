@@ -12,7 +12,7 @@ jobs:
     - name: checkout codebase
       uses: actions/checkout@v4
     
-    - name: deploy counter service
+    - name: deploy golf portfolio
       env:
         RUST_TARGET: ${{ secrets.RUST_TARGET }}
         TUNNEL_TOKEN: ${{ secrets.TUNNEL_TOKEN }}
