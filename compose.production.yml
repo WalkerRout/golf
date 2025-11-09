@@ -1,6 +1,6 @@
 services:
   server-production:
-    container_name: server
+    container_name: golf-server
     build:
       context: server
       dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
       - production
 
   reverse-proxy-production:
-    container_name: reverse-proxy
+    container_name: golf-reverse-proxy
     image: nginx:alpine
     restart: unless-stopped
     volumes:
@@ -28,7 +28,7 @@ services:
       - production
 
   cloudflared-production:
-    container_name: cloudflared
+    container_name: golf-cloudflared
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     environment:
