@@ -1,0 +1,107 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golf-cloudflared
+  labels:
+    app: golf-cloudflared
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golf-cloudflared
+  template:
+    metadata:
+      labels:
+        app: golf-cloudflared
+    spec:
+      containers:
+        - name: golf-cloudflared
+          image: golf-cloudflared-production:latest
+          imagePullPolicy: Never
+          args:
+            - tunnel
+            - --no-autoupdate
+            - run
+          env:
+            - name: TUNNEL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: golf-secrets
+                  key: TUNNEL_TOKEN
+                  optional: false
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golf-reverse-proxy
+  labels:
+    app: golf-reverse-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golf-reverse-proxy
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: golf-reverse-proxy
+    spec:
+      containers:
+        - name: golf-reverse-proxy
+          image: golf-reverse-proxy-production:latest
+          imagePullPolicy: Never
+      restartPolicy: Always
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golf-server
+  labels:
+    app: golf-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golf-server
+  template:
+    metadata:
+      labels:
+        app: golf-server
+    spec:
+      containers:
+        - name: golf-server
+          image: golf-server-production:latest
+          imagePullPolicy: Never
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golf-server
+spec:
+  type: ClusterIP
+  selector:
+    app: golf-server
+  ports:
+    - port: 3000
+      targetPort: 3000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: golf-reverse-proxy
+spec:
+  type: ClusterIP
+  selector:
+    app: golf-reverse-proxy
+  ports:
+    - port: 80
+      targetPort: 80
