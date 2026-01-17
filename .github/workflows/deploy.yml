@@ -18,11 +18,15 @@ jobs:
         run: |
           docker compose -f compose.yml -f compose.production.yml --profile production build
 
-      - name: import images into k3s
+      - name: tag and push to registry
         run: |
-          docker save golf-server-production:latest | sudo k3s ctr images import -
-          docker save golf-reverse-proxy-production:latest | sudo k3s ctr images import -
-          docker save golf-cloudflared-production:latest | sudo k3s ctr images import -
+          docker tag golf-server-production:latest registry.local:30500/golf-server:latest
+          docker tag golf-reverse-proxy-production:latest registry.local:30500/golf-reverse-proxy:latest
+          docker tag golf-cloudflared-production:latest registry.local:30500/golf-cloudflared:latest
+          
+          docker push registry.local:30500/golf-server:latest
+          docker push registry.local:30500/golf-reverse-proxy:latest
+          docker push registry.local:30500/golf-cloudflared:latest
 
       - name: apply secrets
         run: |
