@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: golf-cloudflared
-          image: golf-cloudflared-production:latest
-          imagePullPolicy: Never
+          image: registry.local:30500/golf-cloudflared:latest
+          imagePullPolicy: Always
           args: [tunnel, --no-autoupdate, run]
           env:
             - name: TUNNEL_TOKEN
@@ -42,8 +42,8 @@ spec:
     spec:
       containers:
         - name: golf-reverse-proxy
-          image: golf-reverse-proxy-production:latest
-          imagePullPolicy: Never
+          image: registry.local:30500/golf-reverse-proxy:latest
+          imagePullPolicy: Always
 
 ---
 apiVersion: apps/v1
@@ -62,8 +62,8 @@ spec:
     spec:
       containers:
         - name: golf-server
-          image: golf-server-production:latest
-          imagePullPolicy: Never
+          image: registry.local:30500/golf-server:latest
+          imagePullPolicy: Always
 
 ---
 apiVersion: v1
