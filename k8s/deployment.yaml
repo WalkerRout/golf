@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: golf-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: golf-server
+  template:
+    metadata:
+      labels:
+        app: golf-server
+    spec:
+      containers:
+        - name: golf-server
+          image: registry.local:30500/golf-server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000

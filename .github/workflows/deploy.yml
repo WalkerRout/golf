@@ -1,4 +1,4 @@
-name: deploy to kunlun
+name: deploy to homelab
 
 on:
   push:
@@ -12,31 +12,18 @@ jobs:
       - name: checkout codebase
         uses: actions/checkout@v4
 
-      - name: build images
+      - name: build image
         env:
           RUST_TARGET: ${{ secrets.RUST_TARGET }}
         run: |
-          docker compose -f compose.yml -f compose.production.yml --profile production build
+          docker compose -f compose.production.yml --profile production build
 
       - name: tag and push to registry
         run: |
-          docker tag golf-server-production:latest registry.local:30500/golf-server:latest
-          docker tag golf-reverse-proxy-production:latest registry.local:30500/golf-reverse-proxy:latest
-          docker tag golf-cloudflared-production:latest registry.local:30500/golf-cloudflared:latest
-          
+          docker tag golf-server:latest registry.local:30500/golf-server:latest
           docker push registry.local:30500/golf-server:latest
-          docker push registry.local:30500/golf-reverse-proxy:latest
-          docker push registry.local:30500/golf-cloudflared:latest
-
-      - name: apply secrets
-        run: |
-          kubectl create secret generic golf-secrets \
-            --from-literal=TUNNEL_TOKEN=${{ secrets.TUNNEL_TOKEN }} \
-            --dry-run=client -o yaml | kubectl apply -f -
 
       - name: deploy
         run: |
-          kubectl apply -f kube.production.yml
+          kubectl apply -f k8s/
           kubectl rollout restart deployment/golf-server
-          kubectl rollout restart deployment/golf-reverse-proxy
-          kubectl rollout restart deployment/golf-cloudflared

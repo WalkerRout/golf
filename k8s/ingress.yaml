@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: golf
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: walkerrout.ca
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: golf-server
+                port:
+                  number: 3000

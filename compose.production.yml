@@ -8,39 +8,7 @@ services:
       args:
         RUST_TARGET: ${RUST_TARGET:?need to know cpu architecture for server musl build}
     restart: unless-stopped
-    networks:
-      - internal
-    # sorta redundant, but this absolutely guarantees that we will never spin up
-    # both development and production containers at the same time...
     profiles:
       - production
 
-  reverse-proxy-production:
-    container_name: golf-reverse-proxy
-    build:
-      context: nginx
-      dockerfile: Dockerfile
-    depends_on:
-      - server-production
-    restart: unless-stopped
-    networks:
-      - internal
-      - external
-    profiles:
-      - production
-
-  cloudflared-production:
-    container_name: golf-cloudflared
-    build:
-      context: cloudflared
-      dockerfile: Dockerfile
-    depends_on:
-      - reverse-proxy-production
-    restart: unless-stopped
-    environment:
-      - TUNNEL_TOKEN=${TUNNEL_TOKEN:-} # optional for parse, but this is required
-    networks:
-      - external
-    command: tunnel --no-autoupdate run
-    profiles:
-      - production
+# ClusterIP is default network and is already internal to the cluster

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: golf-server
+spec:
+  selector:
+    app: golf-server
+  ports:
+    - port: 3000
+      targetPort: 3000
