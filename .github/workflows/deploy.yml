@@ -20,7 +20,7 @@ jobs:
 
       - name: tag and push to registry
         run: |
-          docker tag golf-server:latest registry.local:30500/golf-server:latest
+          docker tag golf-server-production:latest registry.local:30500/golf-server:latest
           docker push registry.local:30500/golf-server:latest
 
       - name: deploy
