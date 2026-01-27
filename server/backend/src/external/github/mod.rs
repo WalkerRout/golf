@@ -4,8 +4,6 @@ use reqwest::{Client, Url};
 
 use serde::Deserialize;
 
-use crate::model::repo::Repo;
-
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
   #[error("failed to fetch repos: {0}")]
@@ -17,7 +15,7 @@ pub enum Error {
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize)]
-struct GitHubRepo {
+struct DeserializedRepo {
   name: String,
   description: Option<String>,
   html_url: String,
@@ -28,8 +26,16 @@ struct GitHubRepo {
   updated_at: DateTime<Utc>,
 }
 
-impl From<GitHubRepo> for Repo {
-  fn from(gh_repo: GitHubRepo) -> Self {
+// cleaned up version for public use
+#[derive(Clone)]
+pub struct Repo {
+  pub name: String,
+  pub description: String,
+  pub url: String,
+}
+
+impl From<DeserializedRepo> for Repo {
+  fn from(gh_repo: DeserializedRepo) -> Self {
     Self {
       name: gh_repo.name,
       description: gh_repo
@@ -56,7 +62,7 @@ pub async fn fetch_repositories() -> Result<Vec<Repo>, Error> {
     .get(url)
     .send()
     .await?
-    .json::<Vec<GitHubRepo>>()
+    .json::<Vec<DeserializedRepo>>()
     .await?;
 
   // we sort serverside...

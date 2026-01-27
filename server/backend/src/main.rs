@@ -1,12 +1,10 @@
 use tokio::fs;
 
-use tracing::info;
+use tracing::{error, info};
 
-mod build;
-mod model;
+mod external;
 mod route;
 mod server;
-mod service;
 mod r#static;
 mod template;
 
@@ -40,9 +38,15 @@ async fn main() {
   show_visible_files().await;
 
   info!("initializing golf_server...");
-
-  let server = Server::new().await;
-  let _ = server.run().await;
-
-  info!("exiting golf_server...");
+  match Server::new().await {
+    Ok(server) => {
+      if let Err(e) = server.run().await {
+        error!("golf_server error - {e}");
+      }
+      info!("exiting golf_server...");
+    }
+    Err(e) => {
+      error!("failed to initialize golf_server... - {e}");
+    }
+  }
 }

@@ -9,14 +9,10 @@ use tower_http::compression::CompressionLayer;
 
 use tracing::warn;
 
-use crate::build::Build;
-use crate::build::congeries;
-use crate::build::home;
-
 use crate::template::HtmlTemplate;
-use crate::template::congeries::Congeries;
+use crate::template::congeries::{self, Congeries};
 use crate::template::error::Error404;
-use crate::template::home::Home;
+use crate::template::home;
 
 use crate::r#static;
 
@@ -33,16 +29,7 @@ fn rest_router() -> Router {
 }
 
 async fn home() -> impl IntoResponse {
-  // singleton cache
-  static HOME_CELL: OnceCell<Home> = OnceCell::const_new();
-  let home = HOME_CELL
-    .get_or_init(|| async {
-      // home model builds into the `Home` template
-      // - err variant is `Infallible`, safe to unwrap...
-      home::builder().await.build().unwrap()
-    })
-    .await
-    .clone();
+  let home = home::build_template().await;
   HtmlTemplate::from(home)
 }
 
@@ -50,7 +37,7 @@ async fn congeries() -> impl IntoResponse {
   // singleton cache
   static CONGERIES_CELL: OnceCell<Congeries> = OnceCell::const_new();
   let congeries = CONGERIES_CELL
-    .get_or_init(|| async { congeries::builder().await.build().unwrap() })
+    .get_or_init(|| async { congeries::build_template().await })
     .await
     .clone();
   HtmlTemplate::from(congeries)
