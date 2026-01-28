@@ -305,6 +305,17 @@ template {
   display: none;
 }
 
+/* Medium screens - hide sidebar when detail is open */
+@media (max-width: 1150px) {
+  .feed.detail-open .posts-panel {
+    display: none;
+  }
+
+  .feed.detail-open .detail-panel {
+    flex: 1;
+  }
+}
+
 /* Mobile styles - stack vertically */
 @media (max-width: 768px) {
   .feed {
@@ -314,14 +325,6 @@ template {
   .posts-panel {
     padding: 1rem;
     gap: 1rem;
-  }
-
-  .feed.detail-open .posts-panel {
-    display: none;
-  }
-
-  .feed.detail-open .detail-panel {
-    flex: 1;
   }
 
   .posts {
