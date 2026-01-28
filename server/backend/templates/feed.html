@@ -8,85 +8,78 @@
 {% endblock extra_css %}
 
 {% block content %}
-  <div class="feed">
-    <div class="intro">
-      <h1>Feed</h1>
-      <p>Consolidated list of neat posts from various sources</p>
-    </div>
+  <div class="feed" id="feedContainer">
+    <!-- posts list panel -->
+    <div class="posts-panel">
+      <div class="intro">
+        <h1>Feed</h1>
+        <p>Consolidated list of neat posts from various sources</p>
+      </div>
 
-    {% if posts.is_empty() %}
-    <div class="empty-state">
-      <p>No posts available.</p>
-    </div>
-    {% else %}
-    <div class="posts">
-      {% for post in posts %}
-      <article
-        class="post-card"
-        data-post-id="{{ post.id }}"
+      {% if posts.is_empty() %}
+      <div class="empty-state">
+        <p>No posts available.</p>
+      </div>
+      {% else %}
+      <div class="posts">
+        {% for post in posts %}
+        <article
+          class="post-card"
+          data-post-id="{{ post.id }}"
+          {% if let Some(html) = post.content_html %}
+          data-content-type="srcdoc"
+          {% if let Some(url) = post.link %}data-content-src="{{ url }}"{% endif %}
+          {% else if let Some(url) = post.link %}
+          data-content-type="src"
+          data-content-src="{{ url }}"
+          {% else %}
+          data-content-type="none"
+          {% endif %}
+        >
+          <div class="post-header">
+            <span class="post-title">{{ post.title }}</span>
+            <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+          <p class="post-summary">{{ post.summary }}</p>
+          <div class="post-footer">
+            <span class="post-source">{{ post.source }}</span>
+            <span class="post-date">{{ post.published }}</span>
+          </div>
+        </article>
+        <!-- hidden content container for srcdoc posts -->
         {% if let Some(html) = post.content_html %}
-        data-content-type="srcdoc"
-        {% if let Some(url) = post.link %}data-content-src="{{ url }}"{% endif %}
-        {% else if let Some(url) = post.link %}
-        data-content-type="src"
-        data-content-src="{{ url }}"
-        {% else %}
-        data-content-type="none"
+        <template data-content-for="{{ post.id }}">{{ html|safe }}</template>
         {% endif %}
-      >
-        <div class="post-header">
-          <span class="post-title">{{ post.title }}</span>
-          <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <polyline points="9 21 3 21 3 15"></polyline>
-            <line x1="21" y1="3" x2="14" y2="10"></line>
-            <line x1="3" y1="21" x2="10" y2="14"></line>
-          </svg>
-        </div>
-        <p class="post-summary">{{ post.summary }}</p>
-        <div class="post-footer">
-          <span class="post-source">{{ post.source }}</span>
-          <span class="post-date">{{ post.published }}</span>
-        </div>
-      </article>
-      <!-- hidden content container for srcdoc posts -->
-      {% if let Some(html) = post.content_html %}
-      <template data-content-for="{{ post.id }}">{{ html|safe }}</template>
+        {% endfor %}
+      </div>
       {% endif %}
-      {% endfor %}
     </div>
-    {% endif %}
-  </div>
 
-  <!-- modal for viewing posts -->
-  <div class="post-modal" id="postModal">
-    <div class="modal-backdrop"></div>
-    <div class="modal-container">
-      <div class="modal-header">
-        <span class="modal-title" id="modalTitle"></span>
-        <button class="modal-close" aria-label="Close">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
+    <!-- detail panel (slides in from right) -->
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-header">
+        <button class="detail-close" id="detailClose" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
           </svg>
         </button>
-      </div>
-      <div class="modal-body">
-        <iframe
-          id="postFrame"
-          sandbox="allow-same-origin allow-scripts allow-popups"
-          loading="lazy"
-        ></iframe>
-      </div>
-      <div class="modal-footer">
-        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="open-original">
-          Open original
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <span class="detail-title" id="detailTitle"></span>
+        <a id="detailLink" href="#" target="_blank" rel="noopener noreferrer" class="detail-external" aria-label="Open original">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
             <polyline points="15 3 21 3 21 9"></polyline>
             <line x1="10" y1="14" x2="21" y2="3"></line>
           </svg>
         </a>
+      </div>
+      <div class="detail-body">
+        <iframe
+          id="detailFrame"
+          sandbox="allow-same-origin allow-scripts allow-popups allow-modals allow-forms"
+          loading="lazy"
+        ></iframe>
       </div>
     </div>
   </div>
@@ -95,69 +88,90 @@
 {% block extra_js %}
 <script>
   (function() {
-    const modal = document.getElementById('postModal');
-    const frame = document.getElementById('postFrame');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalLink = document.getElementById('modalLink');
-    const backdrop = modal.querySelector('.modal-backdrop');
-    const closeBtn = modal.querySelector('.modal-close');
+    const container = document.getElementById('feedContainer');
+    const detailPanel = document.getElementById('detailPanel');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailLink = document.getElementById('detailLink');
+    const detailFrame = document.getElementById('detailFrame');
+    const detailClose = document.getElementById('detailClose');
 
-    // Open modal when clicking a post card
-    document.querySelectorAll('.post-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const postId = card.dataset.postId;
-        const contentType = card.dataset.contentType;
-        const title = card.querySelector('.post-title').textContent;
+    let activeCard = null;
 
-        modalTitle.textContent = title;
+    function openDetail(card) {
+      const postId = card.dataset.postId;
+      const contentType = card.dataset.contentType;
+      const title = card.querySelector('.post-title').textContent;
 
-        if (contentType === 'srcdoc') {
-          // Get content from hidden template
-          const template = document.querySelector(`template[data-content-for="${postId}"]`);
-          if (template) {
-            frame.removeAttribute('src');
-            frame.srcdoc = template.innerHTML;
-          }
-          // Hide "open original" if no external link
-          const srcUrl = card.dataset.contentSrc;
-          if (srcUrl) {
-            modalLink.href = srcUrl;
-            modalLink.style.display = 'flex';
-          } else {
-            modalLink.style.display = 'none';
-          }
-        } else if (contentType === 'src') {
-          const url = card.dataset.contentSrc;
-          frame.removeAttribute('srcdoc');
-          frame.src = url;
-          modalLink.href = url;
-          modalLink.style.display = 'flex';
-        } else {
-          frame.srcdoc = '<p style="padding: 2rem; font-family: sans-serif;">No content available</p>';
-          modalLink.style.display = 'none';
+      detailTitle.textContent = title;
+
+      if (contentType === 'srcdoc') {
+        const template = document.querySelector(`template[data-content-for="${postId}"]`);
+        if (template) {
+          detailFrame.removeAttribute('src');
+          detailFrame.srcdoc = template.innerHTML;
         }
+        const srcUrl = card.dataset.contentSrc;
+        if (srcUrl) {
+          detailLink.href = srcUrl;
+          detailLink.style.display = 'flex';
+        } else {
+          detailLink.style.display = 'none';
+        }
+      } else if (contentType === 'src') {
+        const url = card.dataset.contentSrc;
+        detailFrame.removeAttribute('srcdoc');
+        detailFrame.src = url;
+        detailLink.href = url;
+        detailLink.style.display = 'flex';
+      } else {
+        detailFrame.srcdoc = '<p style="padding: 2rem; font-family: sans-serif; color: #666;">No content available</p>';
+        detailLink.style.display = 'none';
+      }
 
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+      // set active card styling
+      if (activeCard) activeCard.classList.remove('active');
+      card.classList.add('active');
+      activeCard = card;
+
+      // open panel
+      container.classList.add('detail-open');
+    }
+
+    function closeDetail() {
+      container.classList.remove('detail-open');
+      if (activeCard) {
+        activeCard.classList.remove('active');
+        activeCard = null;
+      }
+      // clear iframe after transition
+      setTimeout(() => {
+        if (!container.classList.contains('detail-open')) {
+          detailFrame.removeAttribute('src');
+          detailFrame.removeAttribute('srcdoc');
+        }
+      }, 300);
+    }
+
+    // open detail when clicking a post card
+    document.querySelectorAll('.post-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openDetail(card);
       });
     });
 
-    // Close modal
-    function closeModal() {
-      modal.classList.remove('active');
-      document.body.style.overflow = '';
-      // Clear iframe to stop any media
-      frame.removeAttribute('src');
-      frame.removeAttribute('srcdoc');
-    }
-
-    backdrop.addEventListener('click', closeModal);
-    closeBtn.addEventListener('click', closeModal);
-
-    // Close on escape key
+    detailClose.addEventListener('click', closeDetail);
+    // close on escape key as well
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modal.classList.contains('active')) {
-        closeModal();
+      if (e.key === 'Escape' && container.classList.contains('detail-open')) {
+        closeDetail();
+      }
+    });
+
+    // clicking on posts panel background when detail is open closes it
+    document.querySelector('.posts-panel').addEventListener('click', (e) => {
+      if (container.classList.contains('detail-open') && e.target.closest('.post-card') === null) {
+        closeDetail();
       }
     });
   })();
