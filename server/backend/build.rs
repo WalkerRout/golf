@@ -28,7 +28,7 @@ fn compile_typescript() -> io::Result<()> {
   let frontend_src = "../frontend/src";
   let js_output = "static/js";
 
-  // create output directory
+  // create output dir
   fs::create_dir_all(js_output)?;
 
   let output = Command::new("esbuild")
@@ -41,18 +41,15 @@ fn compile_typescript() -> io::Result<()> {
       "--format=esm",
       &format!("--outdir={}", js_output),
     ])
-    .output();
+    .output()
+    .map_err(|e| io::Error::other(format!("Failed to run esbuild: {}", e)))?;  // <-- Fail here
 
-  if let Ok(output) = output {
-    if !output.status.success() {
-      return Err(io::Error::other(format!(
-        "TypeScript compilation failed:\nstdout: {}\nstderr: {}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr),
-      )));
-    }
-  } else {
-    println!("cargo:warning=Failed to construct Rust `Command` to compile TypeScript files...");
+  if !output.status.success() {
+    return Err(io::Error::other(format!(
+      "TypeScript compilation failed:\nstdout: {}\nstderr: {}",
+      String::from_utf8_lossy(&output.stdout),
+      String::from_utf8_lossy(&output.stderr),
+    )));
   }
 
   println!("cargo:warning=TypeScript compiled successfully");
