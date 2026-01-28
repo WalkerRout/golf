@@ -13,7 +13,7 @@
       <h1>Congeries</h1>
       <p>Some of my assorted projects/experiments</p>
     </div>
-    
+
     <div class="repositories">
       {% for repo in repositories %}
       <a href="{{ repo.url }}" class="repo-card" target="_blank" rel="noopener noreferrer">
@@ -34,3 +34,15 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block extra_js %}
+<script type="module">
+  import { initPagination } from '/static/js/pagination.js';
+  initPagination({
+    containerSelector: '.repositories',
+    itemSelector: '.repo-card',
+    perPage: 24,
+    controlsPosition: 'both',
+  });
+</script>
+{% endblock extra_js %}

@@ -31,6 +31,7 @@ feed-rs = "2.3.1"
 [build-dependencies]
 brotli = "7.0.0"
 flate2 = "1.1.1"
+lightningcss = { version = "1.0.0-alpha.68" }
 
 [target.'cfg(target_env = "musl")'.dependencies]
 mimalloc = "0.1.43"
