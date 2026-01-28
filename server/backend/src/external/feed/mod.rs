@@ -7,11 +7,20 @@ use chrono::{DateTime, Utc};
 use feed_rs::model::{Entry, Feed};
 use feed_rs::parser;
 
+use serde::Deserialize;
+
 use tracing::warn;
 
 use reqwest::Client;
 
 use crate::template::feed::FeedContentWrapper;
+
+#[derive(Deserialize)]
+struct FeedConfig {
+  include: Vec<String>,
+}
+
+const FEED_CONFIG: &str = include_str!("/app/config/feed.json");
 
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
@@ -20,6 +29,9 @@ pub enum Error {
 
   #[error("failed to parse feed - {0}")]
   ParseFailed(#[from] feed_rs::parser::ParseFeedError),
+
+  #[error("invalid config - {0}")]
+  InvalidConfig(#[from] serde_json::Error),
 }
 
 #[derive(Clone)]
@@ -79,12 +91,13 @@ async fn fetch_feed(client: &Client, url: &str) -> Result<Feed, Error> {
   Ok(feed)
 }
 
-pub async fn fetch_feeds(urls: &[&str]) -> Result<Vec<Post>, Error> {
+pub async fn fetch_all() -> Result<Vec<Post>, Error> {
+  let config: FeedConfig = serde_json::from_str(FEED_CONFIG)?;
   let client = Client::builder().user_agent("golf-server").build()?;
 
   let mut all_posts = Vec::new();
 
-  for url in urls {
+  for url in &config.include {
     match fetch_feed(&client, url).await {
       Ok(feed) => {
         let source_title = feed
@@ -135,12 +148,13 @@ fn strip_html_tags(html: &str) -> String {
 }
 
 // shrink some text and add ellipsis for effect...
-fn truncate_plain_text(text: &str, max_len: usize) -> String {
-  if text.len() <= max_len {
+fn truncate_plain_text(text: &str, max_chars: usize) -> String {
+  let char_count = text.chars().count();
+  if char_count <= max_chars {
     text.to_string()
   } else {
-    // find word boundary near max_len to avoid cutting words
-    let truncated = &text[..max_len-3];
+    // take max_chars - 3 characters to leave room for ellipsis
+    let truncated: String = text.chars().take(max_chars - 3).collect();
     format!("{}...", truncated)
   }
 }

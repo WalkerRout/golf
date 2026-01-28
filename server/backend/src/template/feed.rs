@@ -43,13 +43,7 @@ pub struct Feed {
 }
 
 pub async fn build_template() -> Feed {
-  // TODO: Make this configurable via env or config file
-  let feed_urls = &[
-    "https://blog.rust-lang.org/feed.xml",
-    "https://fasterthanli.me/index.xml",
-  ];
-
-  match feed::fetch_feeds(feed_urls).await {
+  match feed::fetch_all().await {
     Ok(posts) => {
       info!("feed template built with {} posts", posts.len());
       Feed {
@@ -61,7 +55,7 @@ pub async fn build_template() -> Feed {
       }
     }
     Err(e) => {
-      warn!("failed to fetch feeds: {e}");
+      warn!("failed to fetch feeds - {e}");
       Feed { posts: Vec::new() }
     }
   }

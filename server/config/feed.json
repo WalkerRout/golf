@@ -1,0 +1,11 @@
+{
+  "include": [
+    "https://blog.rust-lang.org/feed.xml",
+    "https://fasterthanli.me/index.xml",
+    "https://blog.xoria.org/atom.xml",
+    "https://blog.yoshuawuyts.com/rss.xml",
+    "https://eli.thegreenplace.net/feeds/all.atom.xml",
+    "https://nullprogram.com/feed/",
+    "https://mcyoung.xyz/feed.xml"
+  ]
+}

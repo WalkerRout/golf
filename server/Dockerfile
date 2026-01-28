@@ -33,7 +33,7 @@ RUN cargo install cargo-watch
 # use --poll to watch for saved changes on host volume end...
 # use check to ensure we SHOULD be running our application, and it isnt just
 # saved in an intermediate state...
-CMD cargo watch -w backend \
+CMD cargo watch -w backend -w config \
   -i "backend/static/**/*.gz" -i "backend/static/**/*.br" \
   -x "check --release --target $RUST_TARGET --bin golf_server" \
   --poll \

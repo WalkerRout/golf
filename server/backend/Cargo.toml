@@ -18,12 +18,14 @@ askama = "0.12.1"
 tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
 log-panics = "2.1.0"
-# util
-serde = { version = "1.0.225", features = ["derive"] }
-bytes = "1.10.1"
-chrono = { version = "0.4.42", features = ["serde"] }
+# error handling
 anyhow = "1.0.95"
 thiserror = "2.0.16"
+# util
+serde = { version = "1.0.225", features = ["derive"] }
+serde_json = "1.0.149"
+bytes = "1.10.1"
+chrono = { version = "0.4.42", features = ["serde"] }
 feed-rs = "2.3.1"
 
 [build-dependencies]

@@ -1,16 +1,28 @@
+use std::collections::HashSet;
+
 use chrono::{DateTime, Utc};
 
 use reqwest::{Client, Url};
 
 use serde::Deserialize;
 
+#[derive(Deserialize)]
+struct GithubConfig {
+  include: Vec<String>,
+}
+
+const GITHUB_CONFIG: &str = include_str!("/app/config/github.json");
+
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
-  #[error("failed to fetch repos: {0}")]
+  #[error("failed to fetch repos - {0}")]
   FetchFailed(#[from] reqwest::Error),
 
-  #[error("")]
+  #[error("failed to parse url - {0}")]
   UrlParseFailed(#[from] url::ParseError),
+
+  #[error("unable to deserialize config - {0}")]
+  InvalidConfig(#[from] serde_json::Error),
 }
 
 #[allow(dead_code)]
@@ -65,12 +77,12 @@ pub async fn fetch_repositories() -> Result<Vec<Repo>, Error> {
     .json::<Vec<DeserializedRepo>>()
     .await?;
 
-  // we sort serverside...
-  // gh_repos.sort_by(|a, b| b.updated_at.cmp(&a.updated_at));
+  let config: GithubConfig = serde_json::from_str(GITHUB_CONFIG)?;
+  let include_set: HashSet<&str> = config.include.iter().map(|s| s.as_str()).collect();
 
   let repos: Vec<Repo> = gh_repos
     .into_iter()
-    .filter(|r| !r.archived && !r.fork)
+    .filter(|r| !r.archived && !r.fork && include_set.contains(r.name.as_str()))
     .map(Repo::from)
     .collect();
 

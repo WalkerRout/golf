@@ -121,21 +121,6 @@
   font-family: var(--font-family);
 }
 
-/* Loading animation for future use */
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.repo-card.loading {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  pointer-events: none;
-}
-
 /* Mobile styles */
 @media (max-width: 768px) {
   .congeries {
