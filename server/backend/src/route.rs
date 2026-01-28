@@ -10,6 +10,7 @@ use tower_http::compression::CompressionLayer;
 use tracing::warn;
 
 use crate::template::HtmlTemplate;
+use crate::template::about;
 use crate::template::congeries::{self, Congeries};
 use crate::template::error::Error404;
 use crate::template::feed::{self, Feed};
@@ -24,6 +25,7 @@ pub fn router() -> Router {
 fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
+    .route("/about", get(about))
     .route("/congeries", get(congeries))
     .route("/feed", get(feed))
     .fallback(error_404)
@@ -33,6 +35,11 @@ fn rest_router() -> Router {
 async fn home() -> impl IntoResponse {
   let home = home::build_template().await;
   HtmlTemplate::from(home)
+}
+
+async fn about() -> impl IntoResponse {
+  let about = about::build_template().await;
+  HtmlTemplate::from(about)
 }
 
 async fn congeries() -> impl IntoResponse {

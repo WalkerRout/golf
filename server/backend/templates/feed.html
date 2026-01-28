@@ -96,6 +96,7 @@
     const detailClose = document.getElementById('detailClose');
 
     let activeCard = null;
+    let savedScrollTop = 0;
 
     function openDetail(card) {
       const postId = card.dataset.postId;
@@ -128,6 +129,14 @@
         detailLink.style.display = 'none';
       }
 
+      const wasOpen = container.classList.contains('detail-open');
+      const postsPanel = document.querySelector('.posts-panel');
+
+      // save scroll position on initial open
+      if (!wasOpen) {
+        savedScrollTop = postsPanel.scrollTop;
+      }
+
       // set active card styling
       if (activeCard) activeCard.classList.remove('active');
       card.classList.add('active');
@@ -135,6 +144,9 @@
 
       // open panel
       container.classList.add('detail-open');
+
+      // scroll to center active card
+      card.scrollIntoView({ block: 'center' });
     }
 
     function closeDetail() {
@@ -143,6 +155,8 @@
         activeCard.classList.remove('active');
         activeCard = null;
       }
+      // restore scroll position
+      document.querySelector('.posts-panel').scrollTop = savedScrollTop;
       // clear iframe after transition
       setTimeout(() => {
         if (!container.classList.contains('detail-open')) {
@@ -168,9 +182,9 @@
       }
     });
 
-    // clicking on posts panel background when detail is open closes it
-    document.querySelector('.posts-panel').addEventListener('click', (e) => {
-      if (container.classList.contains('detail-open') && e.target.closest('.post-card') === null) {
+    // clicking on pink background (outside content) closes detail
+    document.querySelector('main').addEventListener('click', (e) => {
+      if (container.classList.contains('detail-open') && !e.target.closest('.content')) {
         closeDetail();
       }
     });

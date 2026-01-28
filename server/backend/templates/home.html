@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Home{% endblock title %}
+{% block title %}{{ name }}{% endblock title %}
 
 {% block extra_css %}
   <link rel="preload" href="/static/css/home.css" as="style">
@@ -9,16 +9,11 @@
 
 {% block content %}
   <div class="home">
-    <div class="intro">
-      <p>
-        Hi, I'm {{ name }}!
-        <br>
-        I am a {{ age }} year old Cognitive Systems student at UBC...
-      </p>
-      <br>
-      <p>
-        You can check out some of my <a href="/congeries">projects</a>, or alternatively, my <a href="https://github.com/WalkerRout/">Github</a>
-      </p>
-    </div>
+    <nav class="nav-links">
+      <a href="/about">about</a>
+      <a href="/feed">feed</a>
+      <a href="/congeries">projects</a>
+      <a href="https://github.com/WalkerRout/">github</a>
+    </nav>
   </div>
 {% endblock content %}

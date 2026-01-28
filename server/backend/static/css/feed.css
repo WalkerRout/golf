@@ -317,14 +317,11 @@ template {
   }
 
   .feed.detail-open .posts-panel {
-    flex: 0 0 30%;
-    border-right: none;
-    border-bottom: 1px solid #e8e8e8;
-    padding: 0.75rem;
+    display: none;
   }
 
   .feed.detail-open .detail-panel {
-    flex: 0 0 70%;
+    flex: 1;
   }
 
   .posts {
@@ -372,13 +369,6 @@ template {
     font-size: 14px;
   }
 
-  .feed.detail-open .posts-panel {
-    flex: 0 0 25%;
-  }
-
-  .feed.detail-open .detail-panel {
-    flex: 0 0 75%;
-  }
 }
 
 /* Hover effects for touch devices */

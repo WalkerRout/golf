@@ -21,17 +21,8 @@
     <noscript>
       <link rel="stylesheet" href="/static/css/fonts.css">
     </noscript>
-    <!-- again, swap to render on load -->
-    <link
-      rel="preload"
-      as="style"
-      href="/static/css/base.css"
-      onload="this.onload=null;this.rel='stylesheet'"
-    >
-    <!-- again fallback incase js is disabled -->
-    <noscript>
-      <link rel="stylesheet" href="/static/css/base.css">
-    </noscript>
+    <!-- base.css is critical, load it blocking to prevent FOUC -->
+    <link rel="stylesheet" href="/static/css/base.css">
     {% block extra_css %}{% endblock extra_css %}
   </head>
   <body>

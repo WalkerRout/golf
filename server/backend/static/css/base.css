@@ -97,6 +97,10 @@ a:active {
   color: #8a2c4b;
 }
 
+strong {
+  color: #d14b72;
+}
+
 .content {
   display: flex;
   justify-content: center;

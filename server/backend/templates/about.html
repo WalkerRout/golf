@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}About{% endblock title %}
+
+{% block extra_css %}
+  <link rel="preload" href="/static/css/about.css" as="style">
+  <link rel="stylesheet" href="/static/css/about.css">
+{% endblock extra_css %}
+
+{% block content %}
+  <div class="about">
+    <div class="intro">
+      <p>
+        This is the personal website of <strong>{{ name }}</strong>...
+        <br>
+        <br>
+        I am currently a <strong>Cognitive Systems</strong> student attending <strong>UBC</strong>. I hold specific interests in language, formal logic/verification, HPC, and systems programming.
+        <br>
+        <br>
+        Additionally, I work as a <strong>software developer</strong> at UBC's <strong>Digital Experience Lab</strong>.
+      </p>
+    </div>
+  </div>
+{% endblock content %}
