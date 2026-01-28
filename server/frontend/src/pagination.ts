@@ -11,6 +11,7 @@ interface PaginationState {
   items: HTMLElement[];
   container: HTMLElement;
   controls: HTMLElement[];
+  perPage: number;
 }
 
 const DEFAULT_PER_PAGE = 24;
@@ -85,48 +86,55 @@ function renderControls(state: PaginationState): void {
   });
 }
 
-function showPage(state: PaginationState, perPage: number): void {
-  const { currentPage, items } = state;
+function showPage(state: PaginationState): void {
+  const { currentPage, items, container, perPage } = state;
   const start = (currentPage - 1) * perPage;
-  const end = start + perPage;
+  const end = Math.min(start + perPage, items.length);
 
-  items.forEach((item, index) => {
-    if (index >= start && index < end) {
-      item.style.display = '';
-      item.removeAttribute('aria-hidden');
-    } else {
-      item.style.display = 'none';
-      item.setAttribute('aria-hidden', 'true');
+  // remove current items from DOM (but keep stored in items array)
+  const currentChildren = Array.from(container.querySelectorAll<HTMLElement>(`:scope > :not(template)`));
+  currentChildren.forEach(child => {
+    if (!child.matches('template')) {
+      child.remove();
     }
   });
+
+  // add only current page items to DOM
+  const fragment = document.createDocumentFragment();
+  for (let i = start; i < end; i++) {
+    fragment.appendChild(items[i]);
+  }
+  container.appendChild(fragment);
 
   setPageHash(currentPage);
   renderControls(state);
 }
 
-function goToPage(state: PaginationState, page: number, perPage: number): void {
+function goToPage(state: PaginationState, page: number): void {
   const newPage = Math.max(1, Math.min(page, state.totalPages));
   if (newPage !== state.currentPage) {
     state.currentPage = newPage;
-    showPage(state, perPage);
-    state.container.scrollTo({ top: 0, behavior: 'smooth' });
+    showPage(state);
+    // scroll the scrollable parent to top
+    const scrollParent = state.container.closest('.posts-panel, .congeries') || state.container;
+    scrollParent.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 
-function attachEventListeners(state: PaginationState, perPage: number): void {
+function attachEventListeners(state: PaginationState): void {
   state.controls.forEach(controls => {
     controls.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const button = target.closest('button');
-      if (!button || button.disabled) return;
+      if (!button || (button as HTMLButtonElement).disabled) return;
 
       if (button.classList.contains('pagination-prev')) {
-        goToPage(state, state.currentPage - 1, perPage);
+        goToPage(state, state.currentPage - 1);
       } else if (button.classList.contains('pagination-next')) {
-        goToPage(state, state.currentPage + 1, perPage);
+        goToPage(state, state.currentPage + 1);
       } else if (button.classList.contains('pagination-page')) {
         const page = parseInt(button.dataset.page || '1', 10);
-        goToPage(state, page, perPage);
+        goToPage(state, page);
       }
     });
   });
@@ -137,10 +145,10 @@ function attachEventListeners(state: PaginationState, perPage: number): void {
 
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault();
-      goToPage(state, state.currentPage - 1, perPage);
+      goToPage(state, state.currentPage - 1);
     } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
-      goToPage(state, state.currentPage + 1, perPage);
+      goToPage(state, state.currentPage + 1);
     }
   });
 
@@ -149,7 +157,7 @@ function attachEventListeners(state: PaginationState, perPage: number): void {
     const page = getPageFromHash();
     if (page !== state.currentPage) {
       state.currentPage = page;
-      showPage(state, perPage);
+      showPage(state);
     }
   });
 }
@@ -160,11 +168,15 @@ export function initPagination(config: PaginationConfig): void {
   const container = document.querySelector<HTMLElement>(containerSelector);
   if (!container) return;
 
+  // collect all items and remove them from DOM (store in memory)
   const items = Array.from(container.querySelectorAll<HTMLElement>(itemSelector));
   if (items.length === 0) return;
 
   const totalPages = Math.ceil(items.length / perPage);
   if (totalPages <= 1) return; // no pagination needed
+
+  // remove all items from DOM (theyre stored in items array)
+  items.forEach(item => item.remove());
 
   const currentPage = Math.min(getPageFromHash(), totalPages);
   const controls: HTMLElement[] = [];
@@ -188,8 +200,9 @@ export function initPagination(config: PaginationConfig): void {
     items,
     container,
     controls,
+    perPage,
   };
 
-  showPage(state, perPage);
-  attachEventListeners(state, perPage);
+  showPage(state);
+  attachEventListeners(state);
 }

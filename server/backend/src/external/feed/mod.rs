@@ -13,6 +13,8 @@ use tracing::warn;
 
 use reqwest::Client;
 
+use url::Url;
+
 use crate::template::feed::FeedContentWrapper;
 
 #[derive(Deserialize)]
@@ -50,7 +52,7 @@ pub struct Post {
 }
 
 impl Post {
-  fn from_entry(entry: Entry, source_title: &str) -> Self {
+  fn from_entry(entry: Entry, source_title: &str, feed_url: &Url) -> Self {
     // deconstruct the entry into nice, formatted little pieces
     let title = entry
       .title
@@ -64,7 +66,10 @@ impl Post {
       .map(|raw| truncate_plain_text(&strip_html_tags(&raw), 200))
       .unwrap_or_else(|| "No summary available".to_string());
 
-    let link = entry.links.first().map(|l| l.href.clone());
+    // resolve relative urls against the feed url
+    let link = entry.links.first().and_then(|l| {
+      feed_url.join(&l.href).ok().map(|u| u.to_string())
+    });
     let published = entry.published.or(entry.updated);
 
     // extract html for iframe, wrapped in full document
@@ -98,6 +103,11 @@ pub async fn fetch_all() -> Result<Vec<Post>, Error> {
   let mut all_posts = Vec::new();
 
   for url in &config.include {
+    let Ok(feed_url) = Url::parse(url) else {
+      warn!("invalid feed URL: {}", url);
+      continue;
+    };
+
     match fetch_feed(&client, url).await {
       Ok(feed) => {
         let source_title = feed
@@ -106,7 +116,7 @@ pub async fn fetch_all() -> Result<Vec<Post>, Error> {
           .unwrap_or_else(|| url.to_string());
 
         for entry in feed.entries {
-          all_posts.push(Post::from_entry(entry, &source_title));
+          all_posts.push(Post::from_entry(entry, &source_title, &feed_url));
         }
       }
       Err(e) => {

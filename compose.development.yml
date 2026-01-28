@@ -9,8 +9,9 @@ services:
         RUST_TARGET: ${RUST_TARGET:?need to know cpu architecture for server musl build}
     restart: unless-stopped
     volumes:
-      - ./server/backend:/app/backend
       - ./server/config:/app/config
+      - ./server/backend:/app/backend
+      - ./server/frontend:/app/frontend
     networks:
       - internal
     profiles:
