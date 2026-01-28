@@ -1,0 +1,376 @@
+.feed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  overflow-y: auto;
+  gap: 2rem;
+}
+
+.intro {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.intro h1 {
+  color: #d14b72;
+  font-size: clamp(24px, 5vw, 36px);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.intro p {
+  color: #666;
+  font-size: clamp(14px, 3vw, 18px);
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  color: #999;
+  padding: 3rem;
+}
+
+.posts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.post-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 150px;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #d14b72, #e91e63);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(209, 75, 114, 0.15);
+  border-color: rgba(209, 75, 114, 0.3);
+  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+}
+
+.post-card:hover::before {
+  transform: scaleX(1);
+}
+
+.post-card:hover .expand-icon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.post-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  gap: 0.5rem;
+}
+
+.post-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #d14b72;
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+  /* Clamp to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.expand-icon {
+  width: 18px;
+  height: 18px;
+  color: #d14b72;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.post-summary {
+  flex: 1;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-footer {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.post-source {
+  font-size: 0.8rem;
+  color: #d14b72;
+  font-weight: 500;
+  /* Truncate long source names */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.post-date {
+  font-size: 0.8rem;
+  color: #999;
+  white-space: nowrap;
+}
+
+/* Hide template elements */
+template {
+  display: none;
+}
+
+/* Modal styles */
+.post-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.post-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Match the .content "window" size from base.css */
+  width: 75vw;
+  height: 75vh;
+  background-color: var(--content-bg, #ffffff);
+  border-radius: 8px;
+  box-shadow: 4px 4px 10px var(--shadow-color, rgba(0, 0, 0, 0.15));
+  overflow: hidden;
+  transform: scale(0.95);
+  transition: transform 0.3s ease;
+}
+
+.post-modal.active .modal-container {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e8e8e8;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+}
+
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(100% - 50px);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(209, 75, 114, 0.1);
+  color: #d14b72;
+}
+
+.modal-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.modal-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid #e8e8e8;
+  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+}
+
+.open-original {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #d14b72;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.open-original:hover {
+  background: rgba(209, 75, 114, 0.1);
+  text-decoration: none;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .feed {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .posts {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .post-card {
+    padding: 1.25rem;
+    min-height: 120px;
+  }
+
+  .post-title {
+    font-size: 1rem;
+  }
+
+  .post-summary {
+    font-size: 0.85rem;
+  }
+
+  .modal-container {
+    width: 95vw;
+    height: calc(100vh - 120px);
+    border-radius: 4px;
+  }
+
+  .modal-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .modal-title {
+    font-size: 1rem;
+  }
+
+  .modal-footer {
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+  .feed {
+    padding: 0.75rem;
+  }
+
+  .post-card {
+    padding: 1rem;
+  }
+
+  .intro h1 {
+    font-size: 24px;
+  }
+
+  .intro p {
+    font-size: 14px;
+  }
+
+  .modal-container {
+    width: 98vw;
+  }
+}
+
+/* Hover effects for touch devices */
+@media (hover: none) {
+  .post-card:active {
+    transform: scale(0.98);
+  }
+
+  .expand-icon {
+    opacity: 0.8;
+  }
+}
+
+/* Scrollbar styling */
+.feed::-webkit-scrollbar {
+  width: 8px;
+}
+
+.feed::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.feed::-webkit-scrollbar-thumb {
+  background: rgba(209, 75, 114, 0.3);
+  border-radius: 4px;
+}
+
+.feed::-webkit-scrollbar-thumb:hover {
+  background: rgba(209, 75, 114, 0.5);
+}

@@ -12,6 +12,7 @@ use tracing::warn;
 use crate::template::HtmlTemplate;
 use crate::template::congeries::{self, Congeries};
 use crate::template::error::Error404;
+use crate::template::feed::{self, Feed};
 use crate::template::home;
 
 use crate::r#static;
@@ -24,6 +25,7 @@ fn rest_router() -> Router {
   Router::new()
     .route("/", get(home))
     .route("/congeries", get(congeries))
+    .route("/feed", get(feed))
     .fallback(error_404)
     .layer(CompressionLayer::new().br(true).gzip(true))
 }
@@ -41,6 +43,16 @@ async fn congeries() -> impl IntoResponse {
     .await
     .clone();
   HtmlTemplate::from(congeries)
+}
+
+async fn feed() -> impl IntoResponse {
+  // singleton cache
+  static FEED_CELL: OnceCell<Feed> = OnceCell::const_new();
+  let feed = FEED_CELL
+    .get_or_init(|| async { feed::build_template().await })
+    .await
+    .clone();
+  HtmlTemplate::from(feed)
 }
 
 async fn error_404(OriginalUri(uri): OriginalUri) -> impl IntoResponse {

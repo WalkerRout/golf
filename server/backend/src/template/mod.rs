@@ -5,6 +5,7 @@ use axum::response::{Html, IntoResponse, Response};
 
 pub mod congeries;
 pub mod error;
+pub mod feed;
 pub mod home;
 
 /// Wrapper for us to return our templates in

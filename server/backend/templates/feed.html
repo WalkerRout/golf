@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Feed{% endblock title %}
+
+{% block extra_css %}
+  <link rel="preload" href="/static/css/feed.css" as="style">
+  <link rel="stylesheet" href="/static/css/feed.css">
+{% endblock extra_css %}
+
+{% block content %}
+  <div class="feed">
+    <div class="intro">
+      <h1>Feed</h1>
+      <p>Consolidated list of neat posts from various sources</p>
+    </div>
+
+    {% if posts.is_empty() %}
+    <div class="empty-state">
+      <p>No posts available.</p>
+    </div>
+    {% else %}
+    <div class="posts">
+      {% for post in posts %}
+      <article
+        class="post-card"
+        data-post-id="{{ post.id }}"
+        {% if let Some(html) = post.content_html %}
+        data-content-type="srcdoc"
+        {% if let Some(url) = post.link %}data-content-src="{{ url }}"{% endif %}
+        {% else if let Some(url) = post.link %}
+        data-content-type="src"
+        data-content-src="{{ url }}"
+        {% else %}
+        data-content-type="none"
+        {% endif %}
+      >
+        <div class="post-header">
+          <span class="post-title">{{ post.title }}</span>
+          <svg class="expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+        </div>
+        <p class="post-summary">{{ post.summary }}</p>
+        <div class="post-footer">
+          <span class="post-source">{{ post.source }}</span>
+          <span class="post-date">{{ post.published }}</span>
+        </div>
+      </article>
+      <!-- hidden content container for srcdoc posts -->
+      {% if let Some(html) = post.content_html %}
+      <template data-content-for="{{ post.id }}">{{ html|safe }}</template>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- modal for viewing posts -->
+  <div class="post-modal" id="postModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-container">
+      <div class="modal-header">
+        <span class="modal-title" id="modalTitle"></span>
+        <button class="modal-close" aria-label="Close">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <iframe
+          id="postFrame"
+          sandbox="allow-same-origin allow-scripts allow-popups"
+          loading="lazy"
+        ></iframe>
+      </div>
+      <div class="modal-footer">
+        <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="open-original">
+          Open original
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <line x1="10" y1="14" x2="21" y2="3"></line>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+  (function() {
+    const modal = document.getElementById('postModal');
+    const frame = document.getElementById('postFrame');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalLink = document.getElementById('modalLink');
+    const backdrop = modal.querySelector('.modal-backdrop');
+    const closeBtn = modal.querySelector('.modal-close');
+
+    // Open modal when clicking a post card
+    document.querySelectorAll('.post-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const postId = card.dataset.postId;
+        const contentType = card.dataset.contentType;
+        const title = card.querySelector('.post-title').textContent;
+
+        modalTitle.textContent = title;
+
+        if (contentType === 'srcdoc') {
+          // Get content from hidden template
+          const template = document.querySelector(`template[data-content-for="${postId}"]`);
+          if (template) {
+            frame.removeAttribute('src');
+            frame.srcdoc = template.innerHTML;
+          }
+          // Hide "open original" if no external link
+          const srcUrl = card.dataset.contentSrc;
+          if (srcUrl) {
+            modalLink.href = srcUrl;
+            modalLink.style.display = 'flex';
+          } else {
+            modalLink.style.display = 'none';
+          }
+        } else if (contentType === 'src') {
+          const url = card.dataset.contentSrc;
+          frame.removeAttribute('srcdoc');
+          frame.src = url;
+          modalLink.href = url;
+          modalLink.style.display = 'flex';
+        } else {
+          frame.srcdoc = '<p style="padding: 2rem; font-family: sans-serif;">No content available</p>';
+          modalLink.style.display = 'none';
+        }
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    // Close modal
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+      // Clear iframe to stop any media
+      frame.removeAttribute('src');
+      frame.removeAttribute('srcdoc');
+    }
+
+    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+  })();
+</script>
+{% endblock extra_js %}

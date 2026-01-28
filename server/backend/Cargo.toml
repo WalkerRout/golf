@@ -24,6 +24,7 @@ bytes = "1.10.1"
 chrono = { version = "0.4.42", features = ["serde"] }
 anyhow = "1.0.95"
 thiserror = "2.0.16"
+feed-rs = "2.3.1"
 
 [build-dependencies]
 brotli = "7.0.0"
