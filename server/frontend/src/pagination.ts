@@ -14,7 +14,7 @@ interface PaginationState {
   perPage: number;
 }
 
-const DEFAULT_PER_PAGE = 24;
+const DEFAULT_PER_PAGE = 20;
 
 function getPageFromHash(): number {
   const match = window.location.hash.match(/page=(\d+)/);
