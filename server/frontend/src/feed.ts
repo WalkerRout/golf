@@ -189,8 +189,10 @@ function renderControls(state: FeedState): void {
   }
   bottomControls.innerHTML = html;
 
-  // attach click handlers
+  // attach click handlers (only once per element)
   [topControls, bottomControls].forEach(controls => {
+    if (controls.dataset.hasListener) return;
+    controls.dataset.hasListener = 'true';
     controls.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const button = target.closest('button') as HTMLButtonElement | null;
