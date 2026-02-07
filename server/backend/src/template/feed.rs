@@ -4,6 +4,6 @@ use askama::Template;
 #[template(path = "feed.html")]
 pub struct Feed;
 
-pub fn build_template() -> Feed {
+pub async fn build_template() -> Feed {
   Feed
 }
