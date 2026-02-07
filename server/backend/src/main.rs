@@ -2,13 +2,16 @@ use tokio::fs;
 
 use tracing::{error, info};
 
+mod api;
 mod external;
 mod route;
 mod server;
+mod state;
 mod r#static;
 mod template;
 
 use crate::server::Server;
+use crate::state::AppState;
 
 // https://nickb.dev/blog/default-musl-allocator-considered-harmful-to-performance
 #[cfg(target_env = "musl")]
@@ -37,8 +40,18 @@ async fn main() {
 
   show_visible_files().await;
 
+  info!("initializing app state...");
+  let state = match AppState::new().await {
+    Ok(state) => state,
+    Err(e) => {
+      error!("app state error - {e}");
+      return;
+    }
+  };
+  info!("initialized app state");
+
   info!("initializing golf_server...");
-  match Server::new().await {
+  match Server::new(state).await {
     Ok(server) => {
       if let Err(e) = server.run().await {
         error!("golf_server error - {e}");
@@ -47,6 +60,7 @@ async fn main() {
     }
     Err(e) => {
       error!("failed to initialize golf_server... - {e}");
+      return;
     }
   }
 }

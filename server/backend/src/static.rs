@@ -11,9 +11,11 @@ use tower_http::set_header::SetResponseHeaderLayer;
 
 use tower_layer::Layer;
 
+use crate::state::AppState;
+
 /// Statically serve everything under `static/` on disk,
-/// with a Cache‑Control: public, max-age=31536000, immutable header.
-pub fn asset_router() -> Router {
+/// with a Cache-Control: public, max-age=31536000, immutable header.
+pub fn asset_router() -> Router<AppState> {
   const BACKEND_MANIFEST: &str = env!("CARGO_MANIFEST_DIR");
   let static_dir = Path::new(BACKEND_MANIFEST).join("static");
   let svc = ServeDir::new(static_dir)
