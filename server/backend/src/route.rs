@@ -14,7 +14,7 @@ use crate::template::HtmlTemplate;
 use crate::template::about;
 use crate::template::congeries::{self, Congeries};
 use crate::template::error::Error404;
-use crate::template::feed::Feed;
+use crate::template::feed::{self, Feed};
 use crate::template::home;
 
 pub fn router() -> Router<AppState> {
