@@ -99,6 +99,7 @@
 .detail-body {
   flex: 1;
   overflow: hidden;
+  position: relative;
 }
 
 .detail-body iframe {
@@ -402,4 +403,34 @@ template {
 
 .posts-panel::-webkit-scrollbar-thumb:hover {
   background: rgba(209, 75, 114, 0.5);
+}
+
+/* Skeleton loading */
+.post-card.skeleton {
+  background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+  border-color: #e8e8e8;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.post-card.skeleton::before {
+  display: none;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Detail loading indicator */
+.detail-loading {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  color: #999;
+  font-size: 0.9rem;
+  z-index: 1;
 }

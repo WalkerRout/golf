@@ -20,7 +20,7 @@ fn main() -> io::Result<()> {
   compile_typescript()?;
   // should be called after compiling the ts
   compress_static_files()?;
-  
+
   Ok(())
 }
 
@@ -34,6 +34,7 @@ fn compile_typescript() -> io::Result<()> {
   let output = Command::new("esbuild")
     .args([
       &format!("{}/pagination.ts", frontend_src),
+      &format!("{}/feed.ts", frontend_src),
       "--bundle",
       "--minify",
       "--sourcemap",
@@ -42,7 +43,7 @@ fn compile_typescript() -> io::Result<()> {
       &format!("--outdir={}", js_output),
     ])
     .output()
-    .map_err(|e| io::Error::other(format!("Failed to run esbuild: {}", e)))?;  // <-- Fail here
+    .map_err(|e| io::Error::other(format!("Failed to run esbuild: {}", e)))?; // <-- Fail here
 
   if !output.status.success() {
     return Err(io::Error::other(format!(

@@ -9,20 +9,15 @@ use tower_http::compression::CompressionLayer;
 
 use tracing::warn;
 
+use crate::state::AppState;
 use crate::template::HtmlTemplate;
 use crate::template::about;
 use crate::template::congeries::{self, Congeries};
 use crate::template::error::Error404;
-use crate::template::feed::{self, Feed};
+use crate::template::feed::Feed;
 use crate::template::home;
 
-use crate::r#static;
-
-pub fn router() -> Router {
-  rest_router().merge(r#static::asset_router())
-}
-
-fn rest_router() -> Router {
+pub fn router() -> Router<AppState> {
   Router::new()
     .route("/", get(home))
     .route("/about", get(about))
@@ -53,12 +48,7 @@ async fn congeries() -> impl IntoResponse {
 }
 
 async fn feed() -> impl IntoResponse {
-  // singleton cache
-  static FEED_CELL: OnceCell<Feed> = OnceCell::const_new();
-  let feed = FEED_CELL
-    .get_or_init(|| async { feed::build_template().await })
-    .await
-    .clone();
+  let feed = feed::build_template().await;
   HtmlTemplate::from(feed)
 }
 
