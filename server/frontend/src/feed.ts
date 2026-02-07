@@ -310,6 +310,7 @@ export function initFeed(config: FeedConfig): void {
 
   // keyboard navigation
   document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
     const container = document.getElementById('feedContainer')!;

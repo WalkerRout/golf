@@ -8,7 +8,7 @@ use serde::Deserialize;
 
 use tower_http::compression::CompressionLayer;
 
-use crate::external::feed::{FeedCache, FeedPageResponse};
+use crate::external::feed::FeedCache;
 use crate::state::AppState;
 
 #[derive(Clone)]
@@ -26,33 +26,38 @@ impl FromRef<AppState> for ApiState {
 
 pub fn router() -> Router<AppState> {
   Router::new()
-    .route("/api/feed", get(api_feed))
+    .route("/api/feed", get(feed::get))
     .layer(CompressionLayer::new().br(true).gzip(true))
 }
 
-#[derive(Deserialize)]
-struct FeedQueryParams {
-  #[serde(default = "default_page")]
-  page: usize,
-  #[serde(default = "default_per_page")]
-  per_page: usize,
-}
+// todo move to separate module...
+mod feed {
+  use super::*;
 
-fn default_page() -> usize {
-  1
-}
+  #[derive(Deserialize)]
+  pub struct FeedQueryParams {
+    #[serde(default = "default_page")]
+    page: usize,
+    #[serde(default = "default_per_page")]
+    per_page: usize,
+  }
 
-fn default_per_page() -> usize {
-  24
-}
+  fn default_page() -> usize {
+    1
+  }
 
-async fn api_feed(
-  State(state): State<ApiState>,
-  Query(params): Query<FeedQueryParams>,
-) -> impl IntoResponse {
-  let response = state
-    .feed_cache
-    .get_page(params.page, params.per_page)
-    .await;
-  Json(response)
+  fn default_per_page() -> usize {
+    24
+  }
+
+  pub async fn get(
+    State(state): State<ApiState>,
+    Query(params): Query<FeedQueryParams>,
+  ) -> impl IntoResponse {
+    let response = state
+      .feed_cache
+      .get_page(params.page, params.per_page)
+      .await;
+    Json(response)
+  }
 }

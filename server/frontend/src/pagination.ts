@@ -141,6 +141,7 @@ function attachEventListeners(state: PaginationState): void {
 
   // keyboard navigation
   document.addEventListener('keydown', (e) => {
+    if (e.repeat) return;
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
 
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
