@@ -210,12 +210,16 @@ function renderControls(state: FeedState): void {
   });
 }
 
+let navigating = false;
+
 function goToPage(state: FeedState, page: number): void {
+  if (navigating) return;
   const newPage = Math.max(1, Math.min(page, state.totalPages));
   if (newPage !== state.currentPage) {
+    navigating = true;
     state.currentPage = newPage;
     showSkeletons(state.container);
-    showPage(state);
+    showPage(state).finally(() => { navigating = false; });
     const scrollParent = state.container.closest('.posts-panel') || state.container;
     scrollParent.scrollTo({ top: 0, behavior: 'smooth' });
   }
