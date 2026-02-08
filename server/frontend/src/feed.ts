@@ -189,26 +189,6 @@ function renderControls(state: FeedState): void {
     state.container.parentElement?.insertBefore(bottomControls, state.container.nextSibling);
   }
   bottomControls.innerHTML = html;
-
-  // attach click handlers
-  [topControls, bottomControls].forEach(controls => {
-    if (controls.dataset.hasListener) return;
-    controls.dataset.hasListener = 'true';
-    controls.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      const button = target.closest('button') as HTMLButtonElement | null;
-      if (!button || button.disabled) return;
-
-      if (button.classList.contains('pagination-prev')) {
-        goToPage(state, state.currentPage - 1);
-      } else if (button.classList.contains('pagination-next')) {
-        goToPage(state, state.currentPage + 1);
-      } else if (button.classList.contains('pagination-page')) {
-        const page = parseInt(button.dataset.page || '1', 10);
-        goToPage(state, page);
-      }
-    });
-  });
 }
 
 function goToPage(state: FeedState, page: number): void {
@@ -329,6 +309,20 @@ export function initFeed(config: FeedConfig): void {
     } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault();
       goToPage(state, state.currentPage + 1);
+    }
+  });
+
+  // pagination button clicks (single delegated listener, same as keyboard path)
+  document.addEventListener('click', (e) => {
+    const button = (e.target as HTMLElement).closest('.pagination-controls button') as HTMLButtonElement | null;
+    if (!button || button.disabled) return;
+
+    if (button.classList.contains('pagination-prev')) {
+      goToPage(state, state.currentPage - 1);
+    } else if (button.classList.contains('pagination-next')) {
+      goToPage(state, state.currentPage + 1);
+    } else if (button.classList.contains('pagination-page')) {
+      goToPage(state, parseInt(button.dataset.page || '1', 10));
     }
   });
 
