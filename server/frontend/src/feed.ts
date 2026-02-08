@@ -29,6 +29,7 @@ interface FeedState {
   pageCache: Map<number, FeedPageResponse>;
   activeCard: HTMLElement | null;
   savedScrollTop: number;
+  navigating: boolean;
 }
 
 const PAGE_CACHE: Map<number, FeedPageResponse> = new Map();
@@ -189,7 +190,7 @@ function renderControls(state: FeedState): void {
   }
   bottomControls.innerHTML = html;
 
-  // attach click handlers (only once per element)
+  // attach click handlers
   [topControls, bottomControls].forEach(controls => {
     if (controls.dataset.hasListener) return;
     controls.dataset.hasListener = 'true';
@@ -210,16 +211,14 @@ function renderControls(state: FeedState): void {
   });
 }
 
-let navigating = false;
-
 function goToPage(state: FeedState, page: number): void {
-  if (navigating) return;
+  if (state.navigating) return;
   const newPage = Math.max(1, Math.min(page, state.totalPages));
   if (newPage !== state.currentPage) {
-    navigating = true;
+    state.navigating = true;
     state.currentPage = newPage;
     showSkeletons(state.container);
-    showPage(state).finally(() => { navigating = false; });
+    showPage(state).finally(() => { state.navigating = false; });
     const scrollParent = state.container.closest('.posts-panel') || state.container;
     scrollParent.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -303,6 +302,7 @@ export function initFeed(config: FeedConfig): void {
     pageCache: PAGE_CACHE,
     activeCard: null,
     savedScrollTop: 0,
+    navigating: false,
   };
 
   // initial load
