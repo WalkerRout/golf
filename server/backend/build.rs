@@ -43,7 +43,7 @@ fn compile_typescript() -> io::Result<()> {
       &format!("--outdir={}", js_output),
     ])
     .output()
-    .map_err(|e| io::Error::other(format!("Failed to run esbuild: {}", e)))?; // <-- Fail here
+    .map_err(|e| io::Error::other(format!("Failed to run esbuild: {}", e)))?; // *fail here
 
   if !output.status.success() {
     return Err(io::Error::other(format!(
