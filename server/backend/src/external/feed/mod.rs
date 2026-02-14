@@ -257,8 +257,8 @@ async fn fetch_all() -> Result<Vec<Post>, Error> {
 
   all_posts.sort_by(|a, b| match (&b.published, &a.published) {
     (Some(b_date), Some(a_date)) => b_date.cmp(a_date),
-    (Some(_), None) => Ordering::Less,
-    (None, Some(_)) => Ordering::Greater,
+    (Some(_), None) => Ordering::Greater,
+    (None, Some(_)) => Ordering::Less,
     (None, None) => Ordering::Equal,
   });
 
