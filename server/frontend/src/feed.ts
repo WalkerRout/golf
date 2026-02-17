@@ -34,6 +34,17 @@ interface FeedState {
 
 const PAGE_CACHE: Map<number, FeedPageResponse> = new Map();
 
+const IFRAME_BLOCKED_DOMAINS = ['pm.gc.ca', 'www.pm.gc.ca'];
+
+function isDomainBlocked(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname;
+    return IFRAME_BLOCKED_DOMAINS.some(d => hostname === d || hostname.endsWith('.' + d));
+  } catch {
+    return false;
+  }
+}
+
 function getPageFromHash(): number {
   const match = window.location.hash.match(/page=(\d+)/);
   return match ? Math.max(1, parseInt(match[1], 10)) : 1;
@@ -216,7 +227,16 @@ function openDetail(state: FeedState, card: HTMLElement): void {
 
   detailTitle.textContent = title;
 
-  if (link) {
+  if (link && isDomainBlocked(link)) {
+    detailFrame.removeAttribute('src');
+    detailFrame.srcdoc = `<div style="padding: 2rem; font-family: sans-serif; text-align: center;">
+      <p>This site cannot be embedded.</p>
+      <a href="${link}" target="_blank" rel="noopener">Open in new tab</a>
+    </div>`;
+    detailLink.href = link;
+    detailLink.style.display = 'flex';
+    if (detailLoading) detailLoading.style.display = 'none';
+  } else if (link) {
     detailFrame.removeAttribute('srcdoc');
     detailFrame.src = link;
     detailLink.href = link;
