@@ -67,6 +67,7 @@
     "https://simonwillison.net/atom/entries/",
     "https://arhan.sh/rss.xml",
     "https://graic.net/rss.xml",
-    "https://www.logicmatters.net/feed/"
+    "https://www.logicmatters.net/feed/",
+    "https://thunderseethe.dev/posts/index.xml"
   ]
 }
