@@ -1,6 +1,5 @@
 {
   "include": [
-    "https://www.pm.gc.ca/en/news.rss",
     "https://blog.rust-lang.org/feed.xml",
     "https://fasterthanli.me/index.xml",
     "https://blog.xoria.org/atom.xml",
