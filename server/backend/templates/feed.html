@@ -3,6 +3,8 @@
 {% block title %}Feed{% endblock title %}
 
 {% block extra_css %}
+  <link rel="preload" href="/static/css/pagination.css" as="style">
+  <link rel="stylesheet" href="/static/css/pagination.css">
   <link rel="preload" href="/static/css/feed.css" as="style">
   <link rel="stylesheet" href="/static/css/feed.css">
 {% endblock extra_css %}

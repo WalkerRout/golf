@@ -17,10 +17,55 @@ fn main() -> io::Result<()> {
     env::current_dir().unwrap().display()
   );
 
+  copy_ui_schema()?;
   compile_typescript()?;
   // should be called after compiling the ts
   compress_static_files()?;
 
+  Ok(())
+}
+
+fn copy_ui_schema() -> io::Result<()> {
+  let manifest = env::var("CARGO_MANIFEST_DIR").unwrap();
+  let manifest = Path::new(&manifest);
+  let ui_schema = manifest.join("../../ui-schema");
+
+  if !ui_schema.exists() {
+    return Err(io::Error::other(
+      "ui-schema submodule not found — run `git submodule update --init`",
+    ));
+  }
+
+  let css_dest = manifest.join("static/css");
+  for entry in fs::read_dir(ui_schema.join("css"))? {
+    let src = entry?.path();
+    if src.extension().is_some_and(|e| e == "css") {
+      let dest = css_dest.join(src.file_name().unwrap());
+      fs::copy(&src, &dest)?;
+      println!("cargo:rerun-if-changed={}", src.display());
+    }
+  }
+
+  let fonts_src = ui_schema.join("fonts/inconsolata");
+  let fonts_dest = manifest.join("static/fonts/inconsolata");
+  fs::create_dir_all(&fonts_dest)?;
+  for entry in fs::read_dir(&fonts_src)? {
+    let src = entry?.path();
+    let dest = fonts_dest.join(src.file_name().unwrap());
+    fs::copy(&src, &dest)?;
+    println!("cargo:rerun-if-changed={}", src.display());
+  }
+
+  let tmpl_src = ui_schema.join("templates");
+  let tmpl_dest = manifest.join("templates");
+  for entry in fs::read_dir(&tmpl_src)? {
+    let src = entry?.path();
+    let dest = tmpl_dest.join(src.file_name().unwrap());
+    fs::copy(&src, &dest)?;
+    println!("cargo:rerun-if-changed={}", src.display());
+  }
+
+  println!("cargo:warning=ui-schema assets copied successfully");
   Ok(())
 }
 
