@@ -1,10 +1,11 @@
 FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 WORKDIR /app
+RUN echo 'precedence ::ffff:0:0/96 100' >> /etc/gai.conf
 
 # separate stage for esbuild binary
-FROM alpine:3.19 AS esbuild
+FROM alpine:3.24 AS esbuild
 ARG TARGETARCH
-RUN apk add --no-cache curl \
+RUN apk add --no-cache curl 'ca-certificates-bundle>=20261020-r0' \
   && case "${TARGETARCH}" in \
        amd64) ARCH="x64" ;; \
        arm64) ARCH="arm64" ;; \
